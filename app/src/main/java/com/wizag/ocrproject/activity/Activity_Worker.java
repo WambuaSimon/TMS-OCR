@@ -53,7 +53,7 @@ public class Activity_Worker extends AppCompatActivity {
      * Inserting new note in db
      * and refreshing the list
      */
-    private void createWorker(String name,int id_no, String location, String time_in) {
+   /* private void createWorker(String name,int id_no, String location, String time_in) {
         // inserting note in db and getting
         // newly inserted note id
         long id = db.insertWorker(name,id_no,location,time_in);
@@ -70,7 +70,7 @@ public class Activity_Worker extends AppCompatActivity {
 
         }
     }
-
+*/
     /**
      * Updating note in db and updating
      * item in the list by its position

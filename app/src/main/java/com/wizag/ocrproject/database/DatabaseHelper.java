@@ -5,9 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.wizag.ocrproject.Worker.TABLE_NAME;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -35,27 +39,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + Worker.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 
         // Create tables again
         onCreate(db);
     }
 
-    public long insertWorker(String name,int id_no, String location, String time_out) {
+
+    public long insertWorker(Worker worker) {
         // get writable database as we want to write data
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         // `id` and `timestamp` will be inserted automatically.
         // no need to add them
-        values.put(Worker.COLUMN_NAME, name);
-        values.put(Worker.COLUMN_ID_NO, id_no);
-        values.put(Worker.COLUMN_LOCATION, location);
-        values.put(Worker.COLUMN_TIME_IN, time_out);
+        values.put(Worker.COLUMN_NAME, worker.getName());
+        values.put(Worker.COLUMN_ID_NO, worker.getId_no());
+        values.put(Worker.COLUMN_LOCATION, worker.getLocation());
+        values.put(Worker.COLUMN_TIME_IN, worker.getTime_in());
+        values.put(Worker.COLUMN_TIME_OUT, worker.getTime_out());
+        values.put(Worker.COLUMN_IMAGE, worker.getImage());
 
 
         // insert row
-        long id = db.insert(Worker.TABLE_NAME, null, values);
+        long id = db.insert(TABLE_NAME, null, values);
 
         // close db connection
         db.close();
@@ -68,10 +75,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // get readable database as we are not inserting anything
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(Worker.TABLE_NAME,
+        Cursor cursor = db.query(TABLE_NAME,
                 new String[]{Worker.COLUMN_ID, Worker.COLUMN_NAME, Worker.COLUMN_ID_NO, Worker.COLUMN_LOCATION,
-                        Worker.COLUMN_TIME_IN},
-                Worker.COLUMN_ID + "=?",
+                        Worker.COLUMN_TIME_IN, Worker.COLUMN_TIME_OUT, Worker.COLUMN_IMAGE},
+                Worker.COLUMN_ID_NO + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
         if (cursor != null)
@@ -83,7 +90,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_ID_NO)),
                 cursor.getString(cursor.getColumnIndex(Worker.COLUMN_NAME)),
                 cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LOCATION)),
-                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_IN)));
+                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_IN)),
+                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_OUT)),
+                cursor.getBlob(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));
 
         // close the db connection
         cursor.close();
@@ -91,12 +100,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return worker;
     }
 
+
     public List<Worker> getAllWorkers() {
         List<Worker> workers = new ArrayList<>();
 
+        /*nb: to display image, convert it to bitmap [then to base 64 to send it to the server]*/
+
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + Worker.TABLE_NAME + " ORDER BY " +
-                Worker.COLUMN_TIME_IN + " DESC";
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME + " ORDER BY " +
+                Worker.COLUMN_ID + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -110,6 +122,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 worker.setName(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_NAME)));
                 worker.setLocation(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LOCATION)));
                 worker.setTime_in(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_IN)));
+                worker.setTime_in(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_OUT)));
+                worker.setImage(cursor.getBlob(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));
 
                 workers.add(worker);
             } while (cursor.moveToNext());
@@ -122,8 +136,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return workers;
     }
 
+
+    public boolean rowIdExists(String idNo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select id_no from " + TABLE_NAME
+                + " where id_no=?", new String[]{idNo});
+        boolean exists = (cursor.getCount() > 0);
+    /*cursor.close();
+    db.close();*/
+        return exists;
+    }
+
+
     public int getWorkersCount() {
-        String countQuery = "SELECT  * FROM " + Worker.TABLE_NAME;
+        String countQuery = "SELECT  * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
 
@@ -135,21 +161,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-   /* public int updateNote(Worker worker) {
+    boolean isAdded(int id_no) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + Worker.COLUMN_ID_NO + " =? ";
+        Cursor cursor = sqLiteDatabase.rawQuery(query, null);
+        if (cursor.getCount() > 0)
+            return true;
+        else
+            return false;
+    }
+
+    public int updateWorker(Worker worker) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(Worker.COLUMN_NOTE, worker.getName());
+        values.put(Worker.COLUMN_TIME_OUT, worker.getTime_out());
 
         // updating row
-        return db.update(Note.TABLE_NAME, values, Note.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(note.getId())});
-    }*/
+        return db.update(Worker.TABLE_NAME, values, Worker.COLUMN_ID_NO + " = ?",
+                new String[]{String.valueOf(worker.getId_no())});
+    }
 
     public void deleteNote(Worker worker) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(Worker.TABLE_NAME, Worker.COLUMN_ID + " = ?",
+        db.delete(TABLE_NAME, Worker.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(worker.getId())});
         db.close();
     }
+
+
 }

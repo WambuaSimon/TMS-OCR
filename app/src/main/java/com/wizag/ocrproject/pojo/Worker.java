@@ -7,11 +7,13 @@ public class Worker {
     public static final String COLUMN_ID_NO = "id_no";
     public static final String COLUMN_LOCATION = "location";
     public static final String COLUMN_TIME_IN = "time_in";
+    public static final String COLUMN_TIME_OUT = "time_out";
     public static final String COLUMN_IMAGE = "image";
 
 
     private int id,id_no;
-    private String name,location,time_in;
+    private String name,location,time_in,time_out;
+    private byte[] image;
 
     // Create table SQL query
     public static final String CREATE_TABLE =
@@ -20,18 +22,40 @@ public class Worker {
                     + COLUMN_NAME + " TEXT,"
                     + COLUMN_LOCATION + " TEXT,"
                     + COLUMN_TIME_IN + " TEXT,"
-                    + COLUMN_ID_NO + " TEXT"
+                    + COLUMN_TIME_OUT + " TEXT,"
+                    + COLUMN_ID_NO + " TEXT,"
+                    + COLUMN_IMAGE + " BLOB"
                     + ")";
 
     public Worker() {
     }
 
-    public Worker(int id, int id_no, String name, String location, String time_in) {
+    public Worker(int id, int id_no, String name, String location, String time_in, String time_out, byte[] image) {
         this.id = id;
         this.id_no = id_no;
         this.name = name;
         this.location = location;
         this.time_in = time_in;
+        this.time_out = time_out;
+        this.image = image;
+    }
+
+
+    public Worker(int id_no, String name, String location, String time_in, String time_out, byte[] image) {
+        this.id_no = id_no;
+        this.name = name;
+        this.location = location;
+        this.time_in = time_in;
+        this.time_out = time_out;
+        this.image = image;
+    }
+
+    public Worker(int id_no, String name, String location, String time_in, byte[] image) {
+        this.id_no = id_no;
+        this.name = name;
+        this.location = location;
+        this.time_in = time_in;
+        this.image = image;
     }
 
     public int getId() {
@@ -72,5 +96,21 @@ public class Worker {
 
     public void setTime_in(String time_in) {
         this.time_in = time_in;
+    }
+
+    public String getTime_out() {
+        return time_out;
+    }
+
+    public void setTime_out(String time_out) {
+        this.time_out = time_out;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }

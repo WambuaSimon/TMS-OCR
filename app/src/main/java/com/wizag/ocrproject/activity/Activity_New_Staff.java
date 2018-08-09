@@ -1,5 +1,4 @@
 package com.wizag.ocrproject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +20,7 @@ import com.microblink.uisettings.DocumentUISettings;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class Activity_New_Staff extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 100;
     private MrtdRecognizer mRecognizer;
     private RecognizerBundle mRecognizerBundle;
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_new_staff);
 
 
         gps = new GPSLocation(this);
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void onScanButtonClick(View view) {
+    public void onScanNewStaffClick(View view) {
         // we'll use Machine Readable Travel Document recognizer
         mMRTDRecognizer = new MrtdRecognizer();
 
@@ -97,13 +96,18 @@ public class MainActivity extends AppCompatActivity {
 
         MrzResult mrzResult = mrtdResult.getMrzResult();
         String scannedPrimaryId = mrzResult.getPrimaryId();
+        String scannedSecondaryId = mrzResult.getSecondaryId();
+        String scannedDob = String.valueOf(mrzResult.getDateOfBirth());
+
+
         String scanned_id = mrzResult.getOpt2().replaceAll("[^0-9]", "");
 
         Intent result = new Intent(getApplicationContext(), Activity_Results.class);
-        result.putExtra("Name", scannedPrimaryId);
+        result.putExtra("Name", scannedPrimaryId+scannedSecondaryId);
+        result.putExtra("Dob", scannedDob);
         result.putExtra("Id", scanned_id);
         result.putExtra("Location", location);
-        Toast.makeText(this, "Scanned primary id: " + scanned_id, Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Scanned primary id: " + scanned_id, Toast.LENGTH_LONG).show();
         startActivity(result);
 
 
