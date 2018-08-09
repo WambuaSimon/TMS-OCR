@@ -1,4 +1,4 @@
-package com.wizag.ocrproject;
+package com.wizag.ocrproject.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -6,39 +6,34 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.wizag.ocrproject.database.DatabaseHelper;
+import com.wizag.ocrproject.helper.GPSLocation;
+import com.wizag.ocrproject.R;
+import com.wizag.ocrproject.pojo.Worker;
+import com.wizag.ocrproject.adapter.WorkerAdapter;
+
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-
-import static com.wizag.ocrproject.Worker.TABLE_NAME;
 
 public class Activity_Results extends AppCompatActivity {
     TextView name;

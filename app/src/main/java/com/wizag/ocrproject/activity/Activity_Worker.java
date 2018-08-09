@@ -1,13 +1,16 @@
-package com.wizag.ocrproject;
+package com.wizag.ocrproject.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.view.View;
-import android.widget.Toast;
+
+import com.wizag.ocrproject.database.DatabaseHelper;
+import com.wizag.ocrproject.helper.MyDividerItemDecoration;
+import com.wizag.ocrproject.R;
+import com.wizag.ocrproject.pojo.Worker;
+import com.wizag.ocrproject.adapter.WorkerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

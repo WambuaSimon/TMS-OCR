@@ -1,16 +1,15 @@
-package com.wizag.ocrproject;
+package com.wizag.ocrproject.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.wizag.ocrproject.R;
+import com.wizag.ocrproject.pojo.Worker;
+
 import java.util.List;
 
 

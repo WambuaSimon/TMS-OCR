@@ -1,4 +1,4 @@
-package com.wizag.ocrproject;
+package com.wizag.ocrproject.helper;
 
 import android.content.Context;
 import android.content.res.Resources;

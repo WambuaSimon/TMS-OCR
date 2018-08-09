@@ -1,24 +1,18 @@
-package com.wizag.ocrproject;
+package com.wizag.ocrproject.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import com.microblink.activity.DocumentScanActivity;
-import com.microblink.entities.parsers.config.fieldbyfield.FieldByFieldBundle;
-import com.microblink.entities.recognizers.Recognizer;
 import com.microblink.entities.recognizers.RecognizerBundle;
 import com.microblink.entities.recognizers.blinkid.mrtd.MrtdRecognizer;
 import com.microblink.entities.recognizers.blinkid.mrtd.MrzResult;
 import com.microblink.uisettings.ActivityRunner;
 import com.microblink.uisettings.DocumentUISettings;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.wizag.ocrproject.helper.GPSLocation;
+import com.wizag.ocrproject.R;
 
 public class Activity_New_Staff extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 100;

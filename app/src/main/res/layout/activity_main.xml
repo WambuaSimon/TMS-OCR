@@ -2,15 +2,72 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <Button
+
+
+
+    <android.support.v7.widget.CardView
         android:id="@+id/scan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:onClick="onScanButtonClick"
-        android:text="Scan" />
+        android:layout_width="match_parent"
+        android:layout_height="190dp"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        app:cardCornerRadius="@dimen/_5sdp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_100sdp"
+                android:background="#FF8C00"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:src="@drawable/staff"
+                    android:text="Scan Staff ID"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+            <!--  <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textStyle="bold"
+                  android:layout_marginTop="10dp"
+                  android:text="Banking"/>-->
+            <!--   <View
+                   android:layout_width="match_parent"
+                   android:layout_height="1dp"
+                   android:layout_margin="5dp"
+                   android:background="@color/lightgray" />-->
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_70sdp"
+                android:padding="5dp"
+                android:src="@drawable/id"
+
+                />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 
 
 </LinearLayout>

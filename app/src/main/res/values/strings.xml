@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">OCRProject</string>
+
+    <string name="site_prompt">Site</string>
+
+    <string-array name="site_arrays">
+        <item>--Select Site--</item>
+    </string-array>
 </resources>

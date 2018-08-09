@@ -1,4 +1,4 @@
-package com.wizag.ocrproject;
+package com.wizag.ocrproject.pojo;
 
 public class Worker {
     public static final String TABLE_NAME = "worker";
