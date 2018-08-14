@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.microblink.entities.recognizers.RecognizerBundle;
 import com.microblink.entities.recognizers.blinkid.mrtd.MrtdRecognizer;
 import com.microblink.entities.recognizers.blinkid.mrtd.MrzResult;
+import com.microblink.results.date.DateResult;
 import com.microblink.uisettings.ActivityRunner;
 import com.microblink.uisettings.DocumentUISettings;
 import com.wizag.ocrproject.helper.GPSLocation;
@@ -91,12 +92,12 @@ public class Activity_New_Staff extends AppCompatActivity {
         MrzResult mrzResult = mrtdResult.getMrzResult();
         String scannedPrimaryId = mrzResult.getPrimaryId();
         String scannedSecondaryId = mrzResult.getSecondaryId();
-        String scannedDob = String.valueOf(mrzResult.getDateOfBirth());
+        DateResult scannedDob = mrzResult.getDateOfBirth();
 
 
         String scanned_id = mrzResult.getOpt2().replaceAll("[^0-9]", "");
 
-        Intent result = new Intent(getApplicationContext(), Activity_Results.class);
+        Intent result = new Intent(getApplicationContext(), Activity_New_User_Results.class);
         result.putExtra("Name", scannedPrimaryId+scannedSecondaryId);
         result.putExtra("Dob", scannedDob);
         result.putExtra("Id", scanned_id);
@@ -110,6 +111,7 @@ public class Activity_New_Staff extends AppCompatActivity {
     private void onScanCanceled() {
         Toast.makeText(this, "Scan cancelled!", Toast.LENGTH_SHORT).show();
     }
+
 
 
 }

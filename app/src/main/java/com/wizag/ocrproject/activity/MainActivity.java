@@ -91,10 +91,11 @@ public class MainActivity extends AppCompatActivity {
 
         MrzResult mrzResult = mrtdResult.getMrzResult();
         String scannedPrimaryId = mrzResult.getPrimaryId();
+        String scannedSecondaryId = mrzResult.getSecondaryId();
         String scanned_id = mrzResult.getOpt2().replaceAll("[^0-9]", "");
 
         Intent result = new Intent(getApplicationContext(), Activity_Results.class);
-        result.putExtra("Name", scannedPrimaryId);
+        result.putExtra("Name", scannedPrimaryId+scannedSecondaryId);
         result.putExtra("Id", scanned_id);
         result.putExtra("Location", location);
 //        Toast.makeText(this, "Scanned primary id: " + scanned_id, Toast.LENGTH_LONG).show();

@@ -49,7 +49,8 @@ public class WorkerAdapter extends RecyclerView.Adapter<WorkerAdapter.MyViewHold
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Worker worker = workerList.get(position);
 
-        holder.name.setText(worker.getName());
+        holder.name.setText(worker.getF_name());
+        holder.name.setText(worker.getL_name());
 
 
         holder.id_no.setText(String.valueOf(worker.getId_no()));

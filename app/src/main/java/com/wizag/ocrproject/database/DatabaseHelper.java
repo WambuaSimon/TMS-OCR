@@ -5,12 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.wizag.ocrproject.pojo.Worker;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wizag.ocrproject.pojo.Worker.COLUMN_LAST_NAME;
 import static com.wizag.ocrproject.pojo.Worker.TABLE_NAME;
 
 
@@ -53,11 +55,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         // `id` and `timestamp` will be inserted automatically.
         // no need to add them
-        values.put(Worker.COLUMN_NAME, worker.getName());
+        values.put(Worker.COLUMN_FIRST_NAME, worker.getF_name());
+        values.put(Worker.COLUMN_LAST_NAME, worker.getL_name());
         values.put(Worker.COLUMN_ID_NO, worker.getId_no());
         values.put(Worker.COLUMN_LOCATION, worker.getLocation());
         values.put(Worker.COLUMN_TIME_IN, worker.getTime_in());
         values.put(Worker.COLUMN_TIME_OUT, worker.getTime_out());
+        values.put(Worker.COLUMN_DATE_IN, worker.getDate_in());
+        values.put(Worker.COLUMN_DATE_OUT, worker.getDate_out());
+        values.put(Worker.COLUMN_SITE, worker.getSite());
+        values.put(Worker.COLUMN_WAGE, worker.getSite());
         values.put(Worker.COLUMN_IMAGE, worker.getImage());
 
 
@@ -76,29 +83,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME,
-                new String[]{Worker.COLUMN_ID, Worker.COLUMN_NAME, Worker.COLUMN_ID_NO, Worker.COLUMN_LOCATION,
-                        Worker.COLUMN_TIME_IN, Worker.COLUMN_TIME_OUT, Worker.COLUMN_IMAGE},
+                new String[]{Worker.COLUMN_ID, Worker.COLUMN_FIRST_NAME,COLUMN_LAST_NAME, Worker.COLUMN_ID_NO,  Worker.COLUMN_LOCATION,
+                        Worker.COLUMN_TIME_IN, Worker.COLUMN_TIME_OUT, Worker.COLUMN_DATE_IN, Worker.COLUMN_DATE_OUT, Worker.COLUMN_SITE,Worker.COLUMN_WAGE, Worker.COLUMN_IMAGE},
                 Worker.COLUMN_ID_NO + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
-        if (cursor != null)
+        if (cursor != null && cursor.getCount() > 0)
             cursor.moveToFirst();
 
-        // prepare note object
-        Worker worker = new Worker(
-                cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_ID)),
-                cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_ID_NO)),
-                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_NAME)),
-                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LOCATION)),
-                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_IN)),
-                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_OUT)),
-                cursor.getBlob(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));
 
-        // close the db connection
-        cursor.close();
+            // prepare note object
+            Worker worker = new Worker(
+                    cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_ID)),
+                    cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_ID_NO)),
+                    cursor.getString(cursor.getColumnIndex(Worker.COLUMN_FIRST_NAME)),
+                    cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LAST_NAME)),
+                    cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LOCATION)),
+                    cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_IN)),
+                    cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_OUT)),
+                    cursor.getString(cursor.getColumnIndex(Worker.COLUMN_DATE_IN)),
+                    cursor.getString(cursor.getColumnIndex(Worker.COLUMN_DATE_OUT)),
+                    cursor.getString(cursor.getColumnIndex(Worker.COLUMN_SITE)),
+                    cursor.getString(cursor.getColumnIndex(Worker.COLUMN_WAGE)),
+                    cursor.getBlob(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));
 
-        return worker;
-    }
+            // close the db connection
+            cursor.close();
+
+
+            return worker;
+        }
+
 
 
     public List<Worker> getAllWorkers() {
@@ -119,10 +134,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Worker worker = new Worker();
                 worker.setId(cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_ID)));
                 worker.setId_no(cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_ID_NO)));
-                worker.setName(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_NAME)));
+                worker.setF_name(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_FIRST_NAME)));
+                worker.setL_name(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LAST_NAME)));
                 worker.setLocation(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LOCATION)));
                 worker.setTime_in(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_IN)));
                 worker.setTime_in(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME_OUT)));
+                worker.setTime_in(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_DATE_IN)));
+                worker.setTime_in(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_DATE_OUT)));
+                worker.setTime_in(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_SITE)));
+                worker.setTime_in(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_WAGE)));
                 worker.setImage(cursor.getBlob(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));
 
                 workers.add(worker);
@@ -146,6 +166,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     db.close();*/
         return exists;
     }
+
+
+
 
 
     public int getWorkersCount() {
@@ -184,7 +207,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteNote(Worker worker) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, Worker.COLUMN_ID + " = ?",
+        db.delete(TABLE_NAME, Worker.COLUMN_ID_NO + " = ?",
                 new String[]{String.valueOf(worker.getId())});
         db.close();
     }

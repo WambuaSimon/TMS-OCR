@@ -5,5 +5,11 @@
 
     <string-array name="site_arrays">
         <item>--Select Site--</item>
+        <item>--Site A--</item>
+        <item>--Site B--</item>
     </string-array>
+
+    <string name="error_msg_no_internet">Not connected to internet</string>
+    <string name="error_msg_timeout">The server took too long to respond</string>
+    <string name="error_msg_unknown">An unexpected error occurred</string>
 </resources>

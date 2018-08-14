@@ -10,58 +10,60 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+
         android:padding="16dp"
         tools:context=".activity.Activity_Login">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
             android:padding="6dp"
-            android:text="Manager Login"
+            android:text="Check in to a site"
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Username"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+        <!--  <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="16dp"
+              android:text="Username"
+              android:textColor="@android:color/black"
+              android:textSize="20sp"
+              android:textStyle="bold" />
 
-        <EditText
+          <EditText
 
-            android:id="@+id/username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/sell"
-            android:inputType="textPersonName"
-            android:padding="16dp"
-            android:textColor="@android:color/black" />
+              android:id="@+id/username"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/sell"
+              android:inputType="textPersonName"
+              android:padding="16dp"
+              android:textColor="@android:color/black" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Password"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="16dp"
+              android:text="Password"
+              android:textColor="@android:color/black"
+              android:textSize="20sp"
+              android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/sell"
+          <EditText
+              android:id="@+id/password"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/sell"
 
-            android:inputType="textPassword"
-            android:padding="16dp"
-            android:textColor="@android:color/black" />
-
+              android:inputType="textPassword"
+              android:padding="16dp"
+              android:textColor="@android:color/black" />
+  -->
         <LinearLayout
             android:id="@+id/linear_size"
             android:layout_width="match_parent"
@@ -90,7 +92,7 @@
                 android:background="#B8BECC" />
 
             <Spinner
-                android:id="@+id/buy_spinner_size"
+                android:id="@+id/site"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="10dp"
@@ -105,37 +107,49 @@
 
             </Spinner>
 
+
         </LinearLayout>
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+        <!--   <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:gravity="bottom"
+               android:orientation="horizontal">
+
+               <Button
+                   android:id="@+id/cancel"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1"
+                   android:background="#cc0605"
+                   android:text="Cancel"
+                   android:textAllCaps="false"
+                   android:textColor="@android:color/white" />
+
+               <Button
+
+                   android:id="@+id/login"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1"
+                   android:background="#308446"
+                   android:text="Login"
+                   android:textAllCaps="false"
+                   android:textColor="@android:color/white" />
+
+           </LinearLayout>-->
+
+        <Button
+
+            android:id="@+id/checkin"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="bottom"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
 
-            <Button
-                android:id="@+id/cancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#cc0605"
-                android:text="Cancel"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white" />
-
-            <Button
-
-                android:id="@+id/login"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#308446"
-                android:text="Login"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white" />
-
-        </LinearLayout>
-
+            android:background="#308446"
+            android:text="Check in"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 </ScrollView>

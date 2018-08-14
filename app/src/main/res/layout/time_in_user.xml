@@ -26,7 +26,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/time_out_name"
+            android:id="@+id/time_in_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -47,7 +47,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/time_out_id_no"
+            android:id="@+id/time_in_id_no"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -73,13 +73,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="#ff0000"
+            android:background="#308446"
             android:orientation="horizontal"
             android:padding="10dp"
             android:weightSum="1">
 
             <TextView
-                android:id="@+id/time_out"
+                android:id="@+id/time_in_txt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
@@ -90,7 +90,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/date_out"
+                android:id="@+id/date_in_txt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"

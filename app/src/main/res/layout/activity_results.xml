@@ -28,7 +28,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Name"
-
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -40,7 +39,6 @@
             android:layout_marginTop="5dp"
             android:background="@drawable/sell"
             android:padding="10dp"
-
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -51,7 +49,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="ID Number"
-
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -67,28 +64,73 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-
         <TextView
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Time in"
+            android:text="Date/Time in"
 
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/time_in"
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:background="#308446"
-            android:padding="10dp"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:weightSum="1"
+
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/time_in"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.5"
+                android:text="Time"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/date_in"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="Date"
+                android:textSize="18sp"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+
+        <!-- <TextView
+
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="10dp"
+             android:text="Time in"
+
+             android:textColor="@android:color/black"
+             android:textSize="18sp"
+             android:textStyle="bold" />
+
+         <TextView
+             android:id="@+id/time_in"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="5dp"
+             android:background="#308446"
+             android:padding="10dp"
+             android:textColor="@android:color/white"
+             android:textSize="20sp"
+             android:textStyle="bold" />-->
 
 
         <LinearLayout
