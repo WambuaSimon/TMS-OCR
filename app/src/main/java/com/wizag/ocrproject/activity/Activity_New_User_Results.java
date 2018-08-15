@@ -15,9 +15,11 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +31,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -38,6 +41,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.wizag.ocrproject.R;
 import com.wizag.ocrproject.database.DatabaseHelper;
+import com.wizag.ocrproject.helper.GPSLocation;
 import com.wizag.ocrproject.network.MySingleton;
 import com.wizag.ocrproject.pojo.SpinnerModel;
 import com.wizag.ocrproject.pojo.Worker;
@@ -51,7 +55,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Activity_New_User_Results extends AppCompatActivity {
 
@@ -72,6 +78,11 @@ public class Activity_New_User_Results extends AppCompatActivity {
     private List<SpinnerModel> workersList = new ArrayList<>();
     ArrayList<String> worker;
     ArrayList<String> SiteName;
+    //    String URL = "http://timetrax.wizag.biz/api/v1/sitesapi";
+    String POST_MATERIAL = "http://timetrax.wizag.biz/api/v1/register_employee";
+    String names[], f_name, l_name;
+    String worker_image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +93,8 @@ public class Activity_New_User_Results extends AppCompatActivity {
 
         isNetworkConnectionAvailable();
 
+
+//        loadSpinnerData(URL);
 
         worker = new ArrayList<>();
         SiteName = new ArrayList<>();
@@ -98,29 +111,28 @@ public class Activity_New_User_Results extends AppCompatActivity {
         scanned_id_no = getIntent().getStringExtra("Id");
         current_location = getIntent().getStringExtra("Location");
         dob_txt = getIntent().getStringExtra("Dob");
+        /*split names*/
+        names = scanned_name.split(" ", 2);
+        f_name = names[0];
+        l_name = names[1];
 
         scanned_id_to_int = Integer.parseInt(scanned_id_no);
         name = findViewById(R.id.name);
         id_no = findViewById(R.id.id_no);
         id_image = findViewById(R.id.id_image);
-        dob = findViewById(R.id.dob);
+
         reg_time = findViewById(R.id.reg_time);
         reg_date = findViewById(R.id.reg_date);
 
-        site = findViewById(R.id.site);
+
+//        site = findViewById(R.id.site);
         wage = findViewById(R.id.wage);
 
         name.setText(scanned_name);
-        dob.setText(dob_txt);
+
         id_no.setText(scanned_id_no);
         reg_date.setText(date);
         reg_time.setText(time);
-
-
-        bitmap = ((BitmapDrawable) id_image.getDrawable()).getBitmap();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
-        id_photo = outputStream.toByteArray();
 
 
         cancel = (Button) findViewById(R.id.cancel);
@@ -138,7 +150,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
             public void onClick(View view) {
                 /*save to both remote and local db*/
                 wage_txt = wage.getText().toString();
-                String site_name = site.getSelectedItem().toString();
+//                String site_name = site.getSelectedItem().toString();
 
                 if (wage_txt.isEmpty()) {
                     Toast.makeText(Activity_New_User_Results.this, "Enter Wage Amount in KSH. to continue", Toast.LENGTH_LONG).show();
@@ -146,8 +158,9 @@ public class Activity_New_User_Results extends AppCompatActivity {
                     Toast.makeText(Activity_New_User_Results.this, "Capture Image of User to continue", Toast.LENGTH_LONG).show();
 
                 } else {
-                    createWorker(scanned_id_to_int,scanned_name, current_location, time, date, site_name,wage_txt,dob_txt, id_photo);
-                    Toast.makeText(Activity_New_User_Results.this, "User Created", Toast.LENGTH_SHORT).show();
+                    registerUser();
+                    createWorker(scanned_id_to_int, scanned_name, current_location, time, date, wage_txt, dob_txt, id_photo);
+//                    Toast.makeText(Activity_New_User_Results.this, "User Created", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -155,9 +168,9 @@ public class Activity_New_User_Results extends AppCompatActivity {
 
     }
 
-    private void createWorker(int id_no, String name, String location, String time_in, String date_in, String site, String wage, String dob, byte[] id_photo) {
+    private void createWorker(int id_no, String name, String location, String time_in, String date_in, String wage, String dob, byte[] id_photo) {
 
-        long id = db.insertWorker(new Worker(id_no, name, location, time_in, date_in, site,wage,dob, id_photo));
+        long id = db.insertWorker(new Worker(id_no, name, location, time_in, date_in, wage, dob, id_photo));
 
 
     }
@@ -196,9 +209,20 @@ public class Activity_New_User_Results extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            photo = (Bitmap) data.getExtras().get("data");
+           /* photo = (Bitmap) data.getExtras().get("data");
+            id_image.setImageBitmap(photo);*/
 
+//            bitmap = ((BitmapDrawable) id_image.getDrawable()).getBitmap();
+            photo = (Bitmap) data.getExtras().get("data");
             id_image.setImageBitmap(photo);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
+            id_photo = outputStream.toByteArray();
+
+            /*convert image to base64*/
+
+            worker_image = Base64.encodeToString(id_photo, Base64.DEFAULT);
+
         }
     }
 
@@ -232,7 +256,73 @@ public class Activity_New_User_Results extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-    private void loadSpinnerData(String url) {
+
+    private void registerUser() {
+
+        com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_New_User_Results.this);
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+        pDialog.setIndeterminate(false);
+        pDialog.show();
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, POST_MATERIAL,
+                new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                            JSONObject jsonObject = new JSONObject(response);
+                            pDialog.dismiss();
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            String success_message = data.getString("message");
+                            // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
+                            //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
+
+                            Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_SHORT).show();
+                            finish();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        //Toast.makeText(Activity_Buy.this, "", Toast.LENGTH_SHORT).show();
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(Activity_New_User_Results.this, "An Error Occurred", Toast.LENGTH_SHORT).show();
+
+                pDialog.dismiss();
+            }
+        }) {
+            //adding parameters to the request
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("f_name", f_name);
+                params.put("l_name", l_name);
+                params.put("id_no", scanned_id_no);
+                params.put("image", worker_image);
+                params.put("wage", wage_txt);
+                params.put("location", current_location);
+                //params.put("code", "blst786");
+                //  params.put("")
+                return params;
+            }
+
+
+        };
+// Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+
+
+
+
+    /*private void loadSpinnerData(String url) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         final ProgressDialog pDialog = new ProgressDialog(this);
@@ -263,12 +353,12 @@ public class Activity_New_User_Results extends AppCompatActivity {
 
                                 workersList.add(spinnerModel);
 
-                               /* String site_name = site_items.getString("name");
+                               *//* String site_name = site_items.getString("name");
                                 String site_id = site_items.getString("id");
-*//*
+*//**//*
                                 editor.putString("login_site_id", site_id);
                                 editor.apply();
-*/
+*//*
 //                                site_values.put(site_name, site_id);
 
                                 // Toast.makeText(getApplicationContext(), ""+map_values, Toast.LENGTH_SHORT).show();
@@ -338,6 +428,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
         requestQueue.add(stringRequest);
 
 
-    }
+    }*/
+
 
 }
