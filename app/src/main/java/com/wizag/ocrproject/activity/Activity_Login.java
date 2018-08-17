@@ -257,14 +257,14 @@ public class Activity_Login extends AppCompatActivity {
 
 
     private void loadSpinnerData(String url) {
-        final SharedPreferences sp = getSharedPreferences(SHARED_PREF_NAME, MODE_WORLD_READABLE);
+        final SharedPreferences sp = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         final SharedPreferences.Editor editor = sp.edit();
 
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         final ProgressDialog pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
         pDialog.setCancelable(false);
-        pDialog.show();
+//        pDialog.show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
             @Override

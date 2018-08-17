@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -52,7 +53,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Activity_Results extends AppCompatActivity {
     TextView name;
@@ -81,6 +84,11 @@ public class Activity_Results extends AppCompatActivity {
     String existing_date_txt;
     String[] names;
     String f_name, l_name;
+    String checkIn_URL = "http://timetrax.wizag.biz/api/v1/checkin_employee";
+    String checkout_URL = "http://timetrax.wizag.biz/api/v1/checkout_employee";
+    String f_name_remote, l_name_remote;
+    int id_no_remote;
+    ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,12 +143,10 @@ public class Activity_Results extends AppCompatActivity {
         });
 
 
-
-        SharedPreferences sp = getSharedPreferences("site_name", MODE_WORLD_READABLE);
+        SharedPreferences sp = getSharedPreferences("site_name", MODE_PRIVATE);
         site = sp.getString("site_id", "");
 
 //        Toast.makeText(getApplicationContext(), ""+site, Toast.LENGTH_SHORT).show();
-
 
 
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -163,45 +169,49 @@ public class Activity_Results extends AppCompatActivity {
 //                Toast.makeText(getApplicationContext(), "Name: " + existing_name + " No: " + existing_no, Toast.LENGTH_SHORT).show();
 
                 if (!db.rowIdExists(scanned_id_no)) {
-//                     search user in localDb
+//                     search user in remote db and add to local db
                     searchWorker();
 
 //                    createWorker(scanned_name, scanned_id_to_int, current_location, time, date, site, id_photo);
-                    Toast.makeText(getApplicationContext(), "User not found,search in remote server", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "User not found,search in remote server", Toast.LENGTH_SHORT).show();
 
+                } else {
+                   compareDates();
                 }
                 /*same dates, check out*/
-                else if (db.rowIdExists(scanned_id_no) && compareDates()) {
+              /*  else if (db.rowIdExists(scanned_id_no) && compareDates()) {
 
 
                     //  Toast.makeText(getApplicationContext(), "Check out user", Toast.LENGTH_SHORT).show();
 
-                    checkOutUserDialog();
+//                    checkOutUserDialog();
 
                 }
 
 
 //                different dates, check in
                 else if (db.rowIdExists(scanned_id_no) && compareUnequalDates()) {
-                    checkinUserDialog();
+//                    checkinUserDialog();
                     //  Toast.makeText(getApplicationContext(), "Check in user", Toast.LENGTH_SHORT).show();
 
-                }
+                }*/
 
 
             }
         });
     }
 
-    private boolean compareDates() {
+    private void compareDates() {
 
         Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
         existing_date_txt = existing_worker.getDate_in();
         int id_no_txt = existing_worker.getId_no();
         if (existing_date_txt.equalsIgnoreCase(date)) {
-            return true;
-        } else {
-            return false;
+
+            checkOutUserDialog();
+
+        } else if (!existing_date_txt.equalsIgnoreCase(date)) {
+            checkinUserDialog();
         }
 
 
@@ -303,7 +313,7 @@ public class Activity_Results extends AppCompatActivity {
         }
     }
 
-    private void createWorker(String f_name,String l_name, int id_no, String location, String time_in, String date_in, String site, byte[] id_photo) {
+    private void createWorker(String f_name, String l_name, int id_no, String location, String time_in, String date_in, String site, byte[] id_photo) {
         // inserting note in db and getting
         // newly inserted note id
         long id = db.insertWorker(new Worker(id_no, f_name, l_name, location, time_in, date_in, site, id_photo));
@@ -343,7 +353,7 @@ public class Activity_Results extends AppCompatActivity {
         existing_date = existing_worker.getDate_in();
 
 
-        name.setText(existing_fname+existing_lname);
+        name.setText(existing_fname + existing_lname);
         id_no.setText(String.valueOf(existing_no));
         time_out.setText(time);
         date_out.setText(date);
@@ -351,7 +361,9 @@ public class Activity_Results extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 /*confirm column*/
                 updateNote(time_out_txt, date_out_txt);
-                Toast.makeText(Activity_Results.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
+                checkoutUser();
+                Toast.makeText(Activity_Results.this, "Updated Successfully", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
                 finish();
 
             }
@@ -406,9 +418,11 @@ public class Activity_Results extends AppCompatActivity {
         dialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 /*confirm column*/
-                createWorker(f_name,l_name, scanned_id_to_int, current_location, time, date, site, id_photo);
-//                startActivity(new Intent(getApplicationContext(), Activity_Worker.class));
-                Toast.makeText(getApplicationContext(), "User Checked in Successfully", Toast.LENGTH_SHORT).show();
+                createWorker(f_name, l_name, scanned_id_to_int, current_location, time, date, site, id_photo);
+                checkinUser();
+                startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
+//                Toast.makeText(getApplicationContext(), "User Checked in Successfully", Toast.LENGTH_SHORT).show();
+
                 finish();
 
 
@@ -442,14 +456,31 @@ public class Activity_Results extends AppCompatActivity {
                 try {
 
                     JSONObject jsonObject = new JSONObject(response);
-                    pDialog.hide();
+                    pDialog.dismiss();
                     if (jsonObject != null) {
                         JSONObject data = jsonObject.getJSONObject("data");
 
-                        boolean exists = data.getBoolean("exists");
+                        String exists = data.getString("exists");
+                        if (exists.equalsIgnoreCase("true")) {
 
-                        Toast.makeText(getApplicationContext(), "" + exists, Toast.LENGTH_SHORT).show();
+                            JSONObject employee = data.getJSONObject("employee");
 
+                            f_name_remote = employee.getString("first_name");
+                            l_name_remote = employee.getString("last_name");
+                            id_no_remote = employee.getInt("id_number");
+
+                            createWorker(f_name_remote, l_name_remote, id_no_remote, current_location, time, date, site, id_photo);
+                            Toast.makeText(getApplicationContext(), "User found and Added to local database", Toast.LENGTH_LONG).show();
+                            checkinUser();
+
+
+                            startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
+                            finish();
+
+                        } else if (exists.equalsIgnoreCase("false")) {
+                            Toast.makeText(getApplicationContext(), "User Does not exist in the system", Toast.LENGTH_LONG).show();
+
+                        }
                         /*JSONArray user = data.getJSONArray("user");
 
                         if (user != null) {
@@ -471,8 +502,6 @@ public class Activity_Results extends AppCompatActivity {
                         }
 */
 
-                    } else {
-                        Toast.makeText(getApplicationContext(), "User Does not exist in the system", Toast.LENGTH_LONG).show();
                     }
 
 
@@ -503,5 +532,135 @@ public class Activity_Results extends AppCompatActivity {
 
     }
 
+    public void checkinUser() {
 
+        com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_Results.this);
+        pDialog = new ProgressDialog(Activity_Results.this);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+//        pDialog.setIndeterminate(false);
+        pDialog.show();
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, checkIn_URL,
+                new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                            JSONObject jsonObject = new JSONObject(response);
+                            pDialog.dismiss();
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            String success_message = data.getString("message");
+                            // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
+                            //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
+
+                            Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
+                            finish();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        //Toast.makeText(Activity_Buy.this, "", Toast.LENGTH_LONG).show();
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                pDialog.dismiss();
+                Toast.makeText(Activity_Results.this, "An Error Occurred", Toast.LENGTH_LONG).show();
+                finish();
+
+            }
+        }) {
+            //adding parameters to the request
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_no", scanned_id_no);
+                params.put("time_in", time);
+                params.put("date_in", date);
+                params.put("site_id", site);
+
+                //params.put("code", "blst786");
+                //  params.put("")
+                return params;
+            }
+
+
+        };
+// Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    private void checkoutUser() {
+
+        com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_Results.this);
+        final ProgressDialog pDialog = new ProgressDialog(Activity_Results.this);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+//        pDialog.setIndeterminate(false);
+        pDialog.show();
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, checkout_URL,
+                new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                            JSONObject jsonObject = new JSONObject(response);
+                            pDialog.dismiss();
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            String success_message = data.getString("message");
+                            // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
+                            //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
+
+                            Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        //Toast.makeText(Activity_Buy.this, "", Toast.LENGTH_SHORT).show();
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(Activity_Results.this, "An Error Occurred", Toast.LENGTH_SHORT).show();
+
+                pDialog.dismiss();
+            }
+        }) {
+            //adding parameters to the request
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_no", scanned_id_no);
+                params.put("time_out", time);
+                params.put("date_out", date);
+                params.put("site_id", site);
+
+                //params.put("code", "blst786");
+                //  params.put("")
+                return params;
+            }
+
+
+        };
+// Add the request to the RequestQueue.
+        queue.add(stringRequest);
+
+    }
+
+    /*@Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }*/
 }

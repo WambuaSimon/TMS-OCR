@@ -33,7 +33,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/name_out"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -54,7 +54,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/id_no"
+            android:id="@+id/id_no_out"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="#308446"
+            android:background="#cc0605"
             android:weightSum="1"
 
             android:orientation="horizontal"
@@ -88,7 +88,7 @@
 
             <TextView
                 android:textStyle="bold"
-                android:id="@+id/time_in"
+                android:id="@+id/time_out"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
@@ -99,7 +99,7 @@
 
             <TextView
                 android:textStyle="bold"
-                android:id="@+id/date_in"
+                android:id="@+id/date_out"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -140,7 +140,7 @@
             android:orientation="vertical">
 
             <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/id_image"
+                android:id="@+id/id_image_out"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_200sdp"
                 android:layout_gravity="center"
@@ -151,7 +151,7 @@
 
 
             <ImageView
-                android:id="@+id/take_id_image"
+                android:id="@+id/take_id_image_out"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_gravity="end"

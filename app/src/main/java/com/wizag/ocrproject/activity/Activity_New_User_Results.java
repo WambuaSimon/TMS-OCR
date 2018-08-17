@@ -82,6 +82,8 @@ public class Activity_New_User_Results extends AppCompatActivity {
     String POST_MATERIAL = "http://timetrax.wizag.biz/api/v1/register_employee";
     String names[], f_name, l_name;
     String worker_image;
+    String checkIn_URL = "http://timetrax.wizag.biz/api/v1/checkin_employee";
+    String site_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +136,8 @@ public class Activity_New_User_Results extends AppCompatActivity {
         reg_date.setText(date);
         reg_time.setText(time);
 
+        SharedPreferences sp = getSharedPreferences("site_name", MODE_PRIVATE);
+        site_id = sp.getString("site_id", "");
 
         cancel = (Button) findViewById(R.id.cancel);
         save = (Button) findViewById(R.id.save);
@@ -159,7 +163,8 @@ public class Activity_New_User_Results extends AppCompatActivity {
 
                 } else {
                     registerUser();
-                    createWorker(scanned_id_to_int, scanned_name, current_location, time, date, wage_txt, dob_txt, id_photo);
+
+
 //                    Toast.makeText(Activity_New_User_Results.this, "User Created", Toast.LENGTH_SHORT).show();
                 }
 
@@ -263,7 +268,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
         final ProgressDialog pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
         pDialog.setCancelable(false);
-        pDialog.setIndeterminate(false);
+//        pDialog.setIndeterminate(false);
         pDialog.show();
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, POST_MATERIAL,
@@ -278,9 +283,78 @@ public class Activity_New_User_Results extends AppCompatActivity {
                             String success_message = data.getString("message");
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
+                            /*save user to local db*/
+                            createWorker(scanned_id_to_int, scanned_name, current_location, time, date, wage_txt, dob_txt, id_photo);
+
+                            /*check in user*/
+
 
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_SHORT).show();
+                            checkinUser();
+                            startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
                             finish();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        //Toast.makeText(Activity_Buy.this, "", Toast.LENGTH_SHORT).show();
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(Activity_New_User_Results.this, "User not saved in remote server", Toast.LENGTH_LONG).show();
+
+                pDialog.dismiss();
+            }
+        }) {
+            //adding parameters to the request
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("f_name", f_name);
+                params.put("l_name", l_name);
+                params.put("id_no", scanned_id_no);
+                params.put("image", "edjenesc");
+                params.put("wage", wage_txt);
+                params.put("location", current_location);
+                //params.put("code", "blst786");
+                //  params.put("")
+                return params;
+            }
+
+
+        };
+// Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+
+    private void checkinUser() {
+
+        com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_New_User_Results.this);
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+//        pDialog.setIndeterminate(false);
+        pDialog.show();
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, checkIn_URL,
+                new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                            JSONObject jsonObject = new JSONObject(response);
+                            pDialog.dismiss();
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            String success_message = data.getString("message");
+                            // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
+                            //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
+
+                            Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_SHORT).show();
+//                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -301,12 +375,11 @@ public class Activity_New_User_Results extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("f_name", f_name);
-                params.put("l_name", l_name);
                 params.put("id_no", scanned_id_no);
-                params.put("image", worker_image);
-                params.put("wage", wage_txt);
-                params.put("location", current_location);
+                params.put("time_in", time);
+                params.put("date_in", date);
+                params.put("site_id", site_id);
+
                 //params.put("code", "blst786");
                 //  params.put("")
                 return params;
@@ -317,118 +390,5 @@ public class Activity_New_User_Results extends AppCompatActivity {
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
-
-
-
-
-
-    /*private void loadSpinnerData(String url) {
-
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        final ProgressDialog pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading...");
-        pDialog.setCancelable(false);
-        pDialog.show();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-
-                    JSONObject jsonObject = new JSONObject(response);
-                    pDialog.hide();
-                    if (jsonObject != null) {
-                        JSONObject data = jsonObject.getJSONObject("data");
-                        JSONArray sites = data.getJSONArray("sites");
-
-                        if (sites != null) {
-                            for (int i = 0; i < sites.length(); i++) {
-
-                                JSONObject site_items = sites.getJSONObject(i);
-
-                                SpinnerModel spinnerModel = new SpinnerModel();
-
-                                spinnerModel.setName(site_items.getString("name"));
-                                spinnerModel.setId(site_items.getString("id"));
-
-                                workersList.add(spinnerModel);
-
-                               *//* String site_name = site_items.getString("name");
-                                String site_id = site_items.getString("id");
-*//**//*
-                                editor.putString("login_site_id", site_id);
-                                editor.apply();
-*//*
-//                                site_values.put(site_name, site_id);
-
-                                // Toast.makeText(getApplicationContext(), ""+map_values, Toast.LENGTH_SHORT).show();
-
-                                if (site_items != null) {
-                                    if (SiteName.contains(sites.getJSONObject(i).getString("name"))) {
-
-                                    } else {
-
-
-                                        SiteName.add(sites.getJSONObject(i).getString("name"));
-
-                                    }
-
-
-                                }
-
-
-                            }
-                        }
-
-
-                    }
-
-                    site
-                            .setAdapter(new ArrayAdapter<String>(Activity_New_User_Results.this,
-                                    android.R.layout.simple_spinner_dropdown_item,
-                                    SiteName));
-
-                    site.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-
-                            String site_id = workersList.get(position).getId();
-
-
-//                            Toast.makeText(Activity_Login.this, "" + spinnerModels.get(position).getId(), Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> adapterView) {
-
-                        }
-                    });
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_SHORT).show();
-                pDialog.hide();
-            }
-
-        });
-
-        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
-
-
-        int socketTimeout = 30000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        stringRequest.setRetryPolicy(policy);
-        requestQueue.add(stringRequest);
-
-
-    }*/
-
 
 }
