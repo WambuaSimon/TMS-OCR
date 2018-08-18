@@ -89,6 +89,9 @@ public class Activity_Results extends AppCompatActivity {
     String f_name_remote, l_name_remote;
     int id_no_remote;
     ProgressDialog pDialog;
+    int flag_checkin = 1;
+    int flag_checkout = 0;
+    int flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,8 +130,6 @@ public class Activity_Results extends AppCompatActivity {
         f_name = names[0];
         l_name = names[1];
 
-//        Toast.makeText(getApplicationContext(), "\n" + l_name, Toast.LENGTH_SHORT).show();
-
 
         name.setText(scanned_name);
         id_no.setText(scanned_id_no);
@@ -165,35 +166,45 @@ public class Activity_Results extends AppCompatActivity {
                 id_photo = outputStream.toByteArray();
 
 
-//                Toast.makeText(getApplicationContext(), "User Exists", Toast.LENGTH_SHORT).show();
-//                Toast.makeText(getApplicationContext(), "Name: " + existing_name + " No: " + existing_no, Toast.LENGTH_SHORT).show();
-
                 if (!db.rowIdExists(scanned_id_no)) {
+
+                    searchWorker();
+
+                } else if (db.rowIdExists(scanned_id_no)) {
+
+                    Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
+                    existing_date_txt = existing_worker.getDate();
+                    flag = existing_worker.getFlag();
+
+                    if (existing_date_txt.equalsIgnoreCase(date) && flag == 1) {
+//                        checkinUser();
+//                        createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkout);
+
+                        Toast.makeText(getApplicationContext(), "checked in" + existing_date_txt, Toast.LENGTH_SHORT).show();
+
+                    } else if(existing_date_txt.equalsIgnoreCase(date) && flag==0) {
+                        createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkout);
+                        Toast.makeText(getApplicationContext(), "checked out", Toast.LENGTH_SHORT).show();
+//                        checkoutUser();
+                    }
+
+
+                    {
+
+//                        Toast.makeText(getApplicationContext(), "User Doesn't exist for today\n" + existing_date_txt, Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+
+
+
+              /*  else if (!db.rowIdExists(scanned_id_no)) {
 //                     search user in remote db and add to local db
                     searchWorker();
 
-//                    createWorker(scanned_name, scanned_id_to_int, current_location, time, date, site, id_photo);
-//                    Toast.makeText(getApplicationContext(), "User not found,search in remote server", Toast.LENGTH_SHORT).show();
 
-                } else {
-                   compareDates();
-                }
-                /*same dates, check out*/
-              /*  else if (db.rowIdExists(scanned_id_no) && compareDates()) {
-
-
-                    //  Toast.makeText(getApplicationContext(), "Check out user", Toast.LENGTH_SHORT).show();
-
-//                    checkOutUserDialog();
-
-                }
-
-
-//                different dates, check in
-                else if (db.rowIdExists(scanned_id_no) && compareUnequalDates()) {
-//                    checkinUserDialog();
-                    //  Toast.makeText(getApplicationContext(), "Check in user", Toast.LENGTH_SHORT).show();
-
+                }*/ /*else if {
+                    checkinUser();
                 }*/
 
 
@@ -201,14 +212,14 @@ public class Activity_Results extends AppCompatActivity {
         });
     }
 
-    private void compareDates() {
+   /* private void compareDates() {
 
         Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
         existing_date_txt = existing_worker.getDate_in();
         int id_no_txt = existing_worker.getId_no();
         if (existing_date_txt.equalsIgnoreCase(date)) {
 
-            checkOutUserDialog();
+
 
         } else if (!existing_date_txt.equalsIgnoreCase(date)) {
             checkinUserDialog();
@@ -216,8 +227,7 @@ public class Activity_Results extends AppCompatActivity {
 
 
     }
-
-    private boolean compareUnequalDates() {
+*/  /*  private boolean compareUnequalDates() {
 
         Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
         existing_date_txt = existing_worker.getDate_in();
@@ -226,10 +236,8 @@ public class Activity_Results extends AppCompatActivity {
             return true;
         } else {
             return false;
-        }
+        }*/
 
-
-    }
 
     public boolean isNetworkConnectionAvailable() {
         ConnectivityManager cm =
@@ -313,135 +321,12 @@ public class Activity_Results extends AppCompatActivity {
         }
     }
 
-    private void createWorker(String f_name, String l_name, int id_no, String location, String time_in, String date_in, String site, byte[] id_photo) {
-        // inserting note in db and getting
-        // newly inserted note id
-        long id = db.insertWorker(new Worker(id_no, f_name, l_name, location, time_in, date_in, site, id_photo));
+    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, String site, byte[] image, int flag)
 
-        // get the newly inserted note from db
-       /* Worker n = db.getWorker(id);
-
-        if (n != null) {
-            // adding new note to array list at 0 position
-            workersList.add(0, n);
-
-            // refreshing the list
-            mAdapter.notifyDataSetChanged();
-
-        }*/
+    {
+        long id = db.insertWorker(new Worker(id_no, flag, f_name, l_name, location, time, date, site, image));
     }
 
-    public void checkOutUserDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.time_out_layout, null);
-        dialogBuilder.setView(dialogView);
-
-        final TextView name = dialogView.findViewById(R.id.time_out_name);
-        final TextView id_no = dialogView.findViewById(R.id.time_out_id_no);
-        final TextView time_out = dialogView.findViewById(R.id.time_out);
-        final TextView date_out = dialogView.findViewById(R.id.date_out);
-
-        dialogBuilder.setTitle("Check Out Staff");
-        final String time_out_txt = time_out.getText().toString();
-        final String date_out_txt = date_out.getText().toString();
-
-        Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
-        int existing_no = existing_worker.getId_no();
-        String existing_fname = existing_worker.getF_name();
-        String existing_lname = existing_worker.getL_name();
-        existing_date = existing_worker.getDate_in();
-
-
-        name.setText(existing_fname + existing_lname);
-        id_no.setText(String.valueOf(existing_no));
-        time_out.setText(time);
-        date_out.setText(date);
-        dialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                /*confirm column*/
-                updateNote(time_out_txt, date_out_txt);
-                checkoutUser();
-                Toast.makeText(Activity_Results.this, "Updated Successfully", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
-                finish();
-
-            }
-        });
-        dialogBuilder.setNegativeButton("", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //pass
-            }
-        });
-        dialogBuilder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-        AlertDialog b = dialogBuilder.create();
-        b.show();
-    }
-
-    private void updateNote(String time_out, String date_out) {
-        Worker worker = new Worker();
-        // updating note text
-        worker.setTime_out(time_out);
-        worker.setDate_out(date_out);
-
-        // updating note in db
-        db.updateWorker(worker);
-
-    }
-
-
-    public void checkinUserDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.time_in_user, null);
-        dialogBuilder.setView(dialogView);
-
-        final TextView name = dialogView.findViewById(R.id.time_in_name);
-        final TextView id_no = dialogView.findViewById(R.id.time_in_id_no);
-        final TextView time_out = dialogView.findViewById(R.id.time_in_txt);
-        final TextView date_out = dialogView.findViewById(R.id.date_in_txt);
-
-        dialogBuilder.setTitle("Check in Staff");
-        /*final String time_out_txt = time_out.getText().toString();
-        final String date_out_txt = date_out.getText().toString();*/
-
-        name.setText(scanned_name);
-        id_no.setText(scanned_id_no);
-        time_out.setText(time);
-        date_out.setText(date);
-
-        dialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                /*confirm column*/
-                createWorker(f_name, l_name, scanned_id_to_int, current_location, time, date, site, id_photo);
-                checkinUser();
-                startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
-//                Toast.makeText(getApplicationContext(), "User Checked in Successfully", Toast.LENGTH_SHORT).show();
-
-                finish();
-
-
-            }
-        });
-        dialogBuilder.setNegativeButton("", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //pass
-            }
-        });
-        dialogBuilder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-        AlertDialog b = dialogBuilder.create();
-        b.show();
-    }
 
     private void searchWorker() {
         isNetworkConnectionAvailable();
@@ -468,9 +353,6 @@ public class Activity_Results extends AppCompatActivity {
                             f_name_remote = employee.getString("first_name");
                             l_name_remote = employee.getString("last_name");
                             id_no_remote = employee.getInt("id_number");
-
-                            createWorker(f_name_remote, l_name_remote, id_no_remote, current_location, time, date, site, id_photo);
-                            Toast.makeText(getApplicationContext(), "User found and Added to local database", Toast.LENGTH_LONG).show();
                             checkinUser();
 
 
@@ -481,26 +363,7 @@ public class Activity_Results extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "User Does not exist in the system", Toast.LENGTH_LONG).show();
 
                         }
-                        /*JSONArray user = data.getJSONArray("user");
 
-                        if (user != null) {
-                            for (int i = 0; i < user.length(); i++) {
-
-                                JSONObject available_users = user.getJSONObject(i);
-                                String user_id = available_users.getString("id");
-
-
-                                *//*save user in local db*//*
-
-
-                            }
-                        } else {
-
-                            *//*worker not found, prompt adding new worker*//*
-
-
-                        }
-*/
 
                     }
 
@@ -553,7 +416,7 @@ public class Activity_Results extends AppCompatActivity {
                             String success_message = data.getString("message");
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
-
+                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
                             finish();
 
@@ -592,10 +455,22 @@ public class Activity_Results extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    private void checkoutUser() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        pDialog.dismiss();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pDialog.dismiss();
+    }
+
+    public void checkoutUser() {
 
         com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_Results.this);
-        final ProgressDialog pDialog = new ProgressDialog(Activity_Results.this);
+        pDialog = new ProgressDialog(Activity_Results.this);
         pDialog.setMessage("Loading...");
         pDialog.setCancelable(false);
 //        pDialog.setIndeterminate(false);
@@ -613,22 +488,22 @@ public class Activity_Results extends AppCompatActivity {
                             String success_message = data.getString("message");
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
-
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
+                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
-                        //Toast.makeText(Activity_Buy.this, "", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(Activity_Buy.this, "", Toast.LENGTH_LONG).show();
                     }
                 }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
-                Toast.makeText(Activity_Results.this, "An Error Occurred", Toast.LENGTH_SHORT).show();
-
                 pDialog.dismiss();
+                Toast.makeText(Activity_Results.this, "An Error Occurred", Toast.LENGTH_LONG).show();
+                finish();
+
             }
         }) {
             //adding parameters to the request
@@ -649,18 +524,7 @@ public class Activity_Results extends AppCompatActivity {
         };
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
-
     }
 
-    /*@Override
-    protected void onPause() {
-        super.onPause();
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-    }*/
 }

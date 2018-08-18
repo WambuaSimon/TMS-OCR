@@ -71,7 +71,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
     DatabaseHelper db;
     Bitmap photo, bitmap;
     byte[] id_photo;
-    int scanned_id_to_int;
+    String scanned_id_to_int;
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     String wage_txt;
@@ -84,7 +84,8 @@ public class Activity_New_User_Results extends AppCompatActivity {
     String worker_image;
     String checkIn_URL = "http://timetrax.wizag.biz/api/v1/checkin_employee";
     String site_id;
-
+    int flag_checkin = 1;
+    int flag_checkout = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +119,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
         f_name = names[0];
         l_name = names[1];
 
-        scanned_id_to_int = Integer.parseInt(scanned_id_no);
+//        scanned_id_to_int = Integer.parseInt(scanned_id_no);
         name = findViewById(R.id.name);
         id_no = findViewById(R.id.id_no);
         id_image = findViewById(R.id.id_image);
@@ -173,12 +174,12 @@ public class Activity_New_User_Results extends AppCompatActivity {
 
     }
 
-    private void createWorker(int id_no, String name, String location, String time_in, String date_in, String wage, String dob, byte[] id_photo) {
-
-        long id = db.insertWorker(new Worker(id_no, name, location, time_in, date_in, wage, dob, id_photo));
-
-
-    }
+//    private void createWorker(String id_no, String name, String location, String time, String date, String wage, String dob, byte[] id_photo,int flag) {
+//
+//        long id = db.insertWorker(new Worker(id_no, name, location, time, date, wage, dob, id_photo,flag));
+//
+//
+//    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void showMenu(View view) {
@@ -284,7 +285,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
                             /*save user to local db*/
-                            createWorker(scanned_id_to_int, scanned_name, current_location, time, date, wage_txt, dob_txt, id_photo);
+//                            createWorker(scanned_id_to_int, scanned_name, current_location, time, date, wage_txt, dob_txt, id_photo,flag_checkin);
 
                             /*check in user*/
 

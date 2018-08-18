@@ -7,17 +7,16 @@ public class Worker {
     public static final String COLUMN_LAST_NAME = "l_name";
     public static final String COLUMN_ID_NO = "id_no";
     public static final String COLUMN_LOCATION = "location";
-    public static final String COLUMN_TIME_IN = "time_in";
-    public static final String COLUMN_DATE_IN = "date_in";
-    public static final String COLUMN_DATE_OUT = "date_out";
-    public static final String COLUMN_TIME_OUT = "time_out";
+    public static final String COLUMN_TIME = "time";
+    public static final String COLUMN_DATE = "date";
     public static final String COLUMN_SITE = "site";
     public static final String COLUMN_WAGE = "wage";
     public static final String COLUMN_IMAGE = "image";
+    public static final String COLUMN_FLAG = "flag";
 
 
-    private int id, id_no;
-    private String f_name, l_name, location, time_in, time_out, date_in, date_out, site, wage;
+    private int id,id_no, flag;
+    private String f_name, l_name, location, time, date, site, wage;
     private byte[] image;
 
     // Create table SQL query
@@ -28,70 +27,42 @@ public class Worker {
                     + COLUMN_FIRST_NAME + " TEXT,"
                     + COLUMN_LAST_NAME + " TEXT,"
                     + COLUMN_LOCATION + " TEXT,"
-                    + COLUMN_TIME_IN + " TEXT,"
-                    + COLUMN_TIME_OUT + " TEXT,"
-                    + COLUMN_DATE_IN + " TEXT,"
-                    + COLUMN_DATE_OUT + " TEXT,"
+                    + COLUMN_TIME + " TEXT,"
+                    + COLUMN_DATE + " TEXT,"
                     + COLUMN_SITE + " TEXT,"
                     + COLUMN_WAGE + " TEXT,"
-                    + COLUMN_IMAGE + " BLOB"
+                    + COLUMN_IMAGE + " BLOB,"
+                    + COLUMN_FLAG + " INTEGER"
                     + ")";
 
     public Worker() {
     }
 
-    public Worker(int id, int id_no, String f_name, String l_name, String location, String time_in, String time_out, String date_in, String date_out, String site, String wage, byte[] image) {
+    public Worker(int id, int id_no, int flag, String f_name, String l_name, String location, String time, String date, String site, String wage, byte[] image) {
         this.id = id;
         this.id_no = id_no;
+        this.flag = flag;
         this.f_name = f_name;
         this.l_name = l_name;
         this.location = location;
-        this.time_in = time_in;
-        this.time_out = time_out;
-        this.date_in = date_in;
-        this.date_out = date_out;
+        this.time = time;
+        this.date = date;
         this.site = site;
         this.wage = wage;
         this.image = image;
     }
 
-    public Worker(int id_no, String f_name, String l_name, String location, String time_in, String time_out, String date_in, String date_out, String site, String wage, byte[] image) {
+    public Worker(int id_no, int flag, String f_name, String l_name, String location, String time, String date, String site, byte[] image) {
         this.id_no = id_no;
+        this.flag = flag;
         this.f_name = f_name;
         this.l_name = l_name;
         this.location = location;
-        this.time_in = time_in;
-        this.time_out = time_out;
-        this.date_in = date_in;
-        this.date_out = date_out;
-        this.site = site;
-        this.wage = wage;
-        this.image = image;
-    }
-
-    public Worker(int id_no, String f_name, String l_name, String location, String time_in, String date_in, String site, String wage, byte[] image) {
-        this.id_no = id_no;
-        this.f_name = f_name;
-        this.l_name = l_name;
-        this.location = location;
-        this.time_in = time_in;
-        this.date_in = date_in;
-        this.site = site;
-        this.wage = wage;
-        this.image = image;
-    }
-
-    public Worker(int id_no, String f_name, String l_name, String location, String time_in, String date_in, String site, byte[] image) {
-        this.id_no = id_no;
-        this.f_name = f_name;
-        this.l_name = l_name;
-        this.location = location;
-        this.time_in = time_in;
-        this.date_in = date_in;
+        this.time = time;
+        this.date = date;
         this.site = site;
         this.image = image;
     }
-
 
     public int getId() {
         return id;
@@ -107,6 +78,14 @@ public class Worker {
 
     public void setId_no(int id_no) {
         this.id_no = id_no;
+    }
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 
     public String getF_name() {
@@ -133,36 +112,20 @@ public class Worker {
         this.location = location;
     }
 
-    public String getTime_in() {
-        return time_in;
+    public String getTime() {
+        return time;
     }
 
-    public void setTime_in(String time_in) {
-        this.time_in = time_in;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public String getTime_out() {
-        return time_out;
+    public String getDate() {
+        return date;
     }
 
-    public void setTime_out(String time_out) {
-        this.time_out = time_out;
-    }
-
-    public String getDate_in() {
-        return date_in;
-    }
-
-    public void setDate_in(String date_in) {
-        this.date_in = date_in;
-    }
-
-    public String getDate_out() {
-        return date_out;
-    }
-
-    public void setDate_out(String date_out) {
-        this.date_out = date_out;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getSite() {

@@ -56,7 +56,7 @@ public class WorkerAdapter extends RecyclerView.Adapter<WorkerAdapter.MyViewHold
         holder.id_no.setText(String.valueOf(worker.getId_no()));
 
         // Formatting and displaying timestamp
-        holder.time_in.setText(worker.getTime_in());
+//        holder.time_in.setText(worker.getTime_in());
     }
 
     @Override

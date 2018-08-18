@@ -97,18 +97,6 @@ public class Activity_Worker extends AppCompatActivity {
      * Deleting note from SQLite and removing the
      * item from the list by its position
      */
-    private void deleteNote(int position) {
-        // deleting the note from db
-        db.deleteNote(workersList.get(position));
-
-        // removing the note from the list
-        workersList.remove(position);
-        mAdapter.notifyItemRemoved(position);
-
-    }
-
-
-
 
 
 }
