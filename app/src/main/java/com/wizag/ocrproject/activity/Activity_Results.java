@@ -100,7 +100,7 @@ public class Activity_Results extends AppCompatActivity {
 
         db = new DatabaseHelper(this);
         Calendar cal = Calendar.getInstance();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
         date_str = df.format(cal.getTime());
         String[] divide = date_str.split("\\s");
         date = divide[0]; //2017-03-08
@@ -166,95 +166,68 @@ public class Activity_Results extends AppCompatActivity {
                 id_photo = outputStream.toByteArray();
 
 
-
                 if (!db.rowIdExists(scanned_id_no)) {
 
                     searchWorker();
+                    checkinUser();
+                    startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
+                    finish();
 
-                }
 
-                else if (db.rowIdExists(scanned_id_no)) {
+                } else if (db.rowIdExists(scanned_id_no)) {
 
                     Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
 
                     existing_date_txt = existing_worker.getDate();
                     flag = existing_worker.getFlag();
-                    String name =existing_worker.getF_name();
+                    String fname = existing_worker.getF_name();
+                    String lname = existing_worker.getL_name();
 
-                    if(flag==1){
+                    if (flag == 1) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Results.this);
+                        builder.setTitle("Confirm Action").setMessage("Would you like to check out\n\n" + scanned_name + "?").setCancelable(false)
+                                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
 
-                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkout);
-                        Toast.makeText(getApplicationContext(), "user checked out", Toast.LENGTH_SHORT).show();
+                                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkout);
+                                        Toast.makeText(getApplicationContext(), "user checked out successfully", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        // User cancelled the dialog
+                                    }
+                                });
+                        builder.show();
 
+                    } else {
 
+                        AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Results.this);
+                        builder.setTitle("Confirm Action").setMessage("Would you like to check in\n\n" + scanned_name + "?").setCancelable(false)
+                                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+
+                                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkin);
+                                        Toast.makeText(getApplicationContext(), "user checked in successfully", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        // User cancelled the dialog
+                                    }
+                                });
+
+                        builder.show();
                     }
-                    else {
-                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkin);
-                        Toast.makeText(getApplicationContext(), "user checked in", Toast.LENGTH_SHORT).show();
-
-                    }
-
-
-
-                    /*if (flag == 1) {
-                        *//*insert record to check out user*//*
-
-                        Toast.makeText(getApplicationContext(), "Checked out" + flag, Toast.LENGTH_SHORT).show();
-
-                    }
-                    else if(flag == 0){
-                        *//*insert record to check in user*//*
-
-
-
-                    }
-*/
-
-//                    createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkout);
 
                 }
-
-
-
-              /*  else if (!db.rowIdExists(scanned_id_no)) {
-//                     search user in remote db and add to local db
-                    searchWorker();
-
-
-                }*/ /*else if {
-                    checkinUser();
-                }*/
 
 
             }
         });
     }
-
-   /* private void compareDates() {
-
-        Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
-        existing_date_txt = existing_worker.getDate_in();
-        int id_no_txt = existing_worker.getId_no();
-        if (existing_date_txt.equalsIgnoreCase(date)) {
-
-
-
-        } else if (!existing_date_txt.equalsIgnoreCase(date)) {
-            checkinUserDialog();
-        }
-
-
-    }
-*/  /*  private boolean compareUnequalDates() {
-
-        Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
-        existing_date_txt = existing_worker.getDate_in();
-        int id_no_txt = existing_worker.getId_no();
-        if (!existing_date_txt.equalsIgnoreCase(date)) {
-            return true;
-        } else {
-            return false;
-        }*/
 
 
     public boolean isNetworkConnectionAvailable() {
@@ -351,6 +324,7 @@ public class Activity_Results extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         final ProgressDialog pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
         pDialog.show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://timetrax.wizag.biz/api/v1/check_employee/" + scanned_id_no, new Response.Listener<String>() {
@@ -371,14 +345,27 @@ public class Activity_Results extends AppCompatActivity {
                             f_name_remote = employee.getString("first_name");
                             l_name_remote = employee.getString("last_name");
                             id_no_remote = employee.getInt("id_number");
-                            checkinUser();
-
-
-                            startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
-                            finish();
 
                         } else if (exists.equalsIgnoreCase("false")) {
-                            Toast.makeText(getApplicationContext(), "User Does not exist in the system", Toast.LENGTH_LONG).show();
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Results.this);
+                            builder.setTitle("Add Employee").setMessage("Employee:\t" + scanned_name + "does not exist in the system, please add them").setCancelable(false)
+                                    .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            startActivity(new Intent(getApplicationContext(), Activity_New_Staff.class));
+                                            finish();
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // User cancelled the dialog
+                                        }
+                                    });
+
+                            builder.show();
+
+
+//                            Toast.makeText(getApplicationContext(), "User Does not exist in the system", Toast.LENGTH_LONG).show();
 
                         }
 
@@ -479,11 +466,11 @@ public class Activity_Results extends AppCompatActivity {
         pDialog.dismiss();
     }
 
-    @Override
+    /*@Override
     protected void onPause() {
         super.onPause();
         pDialog.dismiss();
-    }
+    }*/
 
     public void checkoutUser() {
 

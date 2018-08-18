@@ -10,7 +10,7 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/scan"
-        android:onClick="onScanNewStaffClick"
+
         android:layout_width="match_parent"
         android:layout_height="190dp"
         android:layout_marginTop="@dimen/_50sdp"
