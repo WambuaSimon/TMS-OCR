@@ -166,34 +166,52 @@ public class Activity_Results extends AppCompatActivity {
                 id_photo = outputStream.toByteArray();
 
 
+
                 if (!db.rowIdExists(scanned_id_no)) {
 
                     searchWorker();
 
-                } else if (db.rowIdExists(scanned_id_no)) {
+                }
+
+                else if (db.rowIdExists(scanned_id_no)) {
 
                     Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
+
                     existing_date_txt = existing_worker.getDate();
                     flag = existing_worker.getFlag();
+                    String name =existing_worker.getF_name();
 
-                    if (existing_date_txt.equalsIgnoreCase(date) && flag == 1) {
-//                        checkinUser();
-//                        createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkout);
+                    if(flag==1){
 
-                        Toast.makeText(getApplicationContext(), "checked in" + existing_date_txt, Toast.LENGTH_SHORT).show();
+                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkout);
+                        Toast.makeText(getApplicationContext(), "user checked out", Toast.LENGTH_SHORT).show();
 
-                    } else if(existing_date_txt.equalsIgnoreCase(date) && flag==0) {
-                        createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkout);
-                        Toast.makeText(getApplicationContext(), "checked out", Toast.LENGTH_SHORT).show();
-//                        checkoutUser();
+
+                    }
+                    else {
+                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkin);
+                        Toast.makeText(getApplicationContext(), "user checked in", Toast.LENGTH_SHORT).show();
+
                     }
 
 
-                    {
 
-//                        Toast.makeText(getApplicationContext(), "User Doesn't exist for today\n" + existing_date_txt, Toast.LENGTH_SHORT).show();
+                    /*if (flag == 1) {
+                        *//*insert record to check out user*//*
+
+                        Toast.makeText(getApplicationContext(), "Checked out" + flag, Toast.LENGTH_SHORT).show();
 
                     }
+                    else if(flag == 0){
+                        *//*insert record to check in user*//*
+
+
+
+                    }
+*/
+
+//                    createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkout);
+
                 }
 
 
@@ -486,6 +504,8 @@ public class Activity_Results extends AppCompatActivity {
                             pDialog.dismiss();
                             JSONObject data = jsonObject.getJSONObject("data");
                             String success_message = data.getString("message");
+                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkout);
+//
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();

@@ -12,6 +12,7 @@ import com.wizag.ocrproject.pojo.Worker;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wizag.ocrproject.pojo.Worker.COLUMN_ID;
 import static com.wizag.ocrproject.pojo.Worker.COLUMN_LAST_NAME;
 import static com.wizag.ocrproject.pojo.Worker.TABLE_NAME;
 
@@ -55,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // `id` and `timestamp` will be inserted automatically.
         // no need to add them
         values.put(Worker.COLUMN_FIRST_NAME, worker.getF_name());
-        values.put(COLUMN_LAST_NAME, worker.getL_name());
+        values.put(Worker.COLUMN_LAST_NAME, worker.getL_name());
         values.put(Worker.COLUMN_ID_NO, worker.getId_no());
         values.put(Worker.COLUMN_LOCATION, worker.getLocation());
         values.put(Worker.COLUMN_TIME, worker.getTime());
@@ -67,7 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
         // insert row
-        long id = db.insertWithOnConflict(TABLE_NAME, null, values,SQLiteDatabase.CONFLICT_REPLACE);
+        long id = db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
         // close db connection
         db.close();
@@ -76,6 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
+
     public Worker getWorker(long id) {
         // get readable database as we are not inserting anything
         SQLiteDatabase db = this.getReadableDatabase();
@@ -83,10 +85,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_NAME,
                 new String[]{Worker.COLUMN_ID, Worker.COLUMN_FIRST_NAME, COLUMN_LAST_NAME, Worker.COLUMN_ID_NO, Worker.COLUMN_LOCATION,
                         Worker.COLUMN_TIME, Worker.COLUMN_DATE, Worker.COLUMN_SITE, Worker.COLUMN_WAGE, Worker.COLUMN_IMAGE, Worker.COLUMN_FLAG},
-                Worker.COLUMN_ID_NO + "=?",
+                Worker.COLUMN_ID_NO + "=?"+ " order by " + COLUMN_ID + " DESC limit 1",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
-
+       /* String query = "SELECT id_no from worker order by id DESC limit 1";
+        Cursor cursor = db.rawQuery(query,new String[]{String.valueOf(id)});
+*/
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -162,7 +166,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // return count
         return count;
     }
-
 
 
     public void deleteWorker(Worker note) {
