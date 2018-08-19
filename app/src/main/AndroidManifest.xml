@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.Activity_Scan" />
         <activity android:name=".activity.Activity_Results" />
         <activity android:name=".activity.Activity_Worker" />
         <activity
@@ -42,8 +42,15 @@
             -->
         </activity>
         <activity android:name=".activity.Activity_New_Staff" />
-        <activity android:name=".activity.Activity_New_User_Results" />
-        <activity android:name=".activity.Activity_CheckOut"></activity>
+        <activity
+            android:name=".activity.Activity_New_User_Results"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".activity.Activity_Add_Site"
+            android:windowSoftInputMode="stateHidden">
+
+        </activity>
     </application>
 
 </manifest>

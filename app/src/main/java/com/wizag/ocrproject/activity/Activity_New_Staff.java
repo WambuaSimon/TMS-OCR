@@ -63,8 +63,9 @@ public class Activity_New_Staff extends AppCompatActivity {
 
     //String password = "password";
 
-     EditText username_txt;
-     EditText password_txt;
+    EditText username_txt;
+    EditText password_txt;
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +160,7 @@ public class Activity_New_Staff extends AppCompatActivity {
         result.putExtra("Location", location);
 //        Toast.makeText(this, "Scanned primary id: " + scanned_id, Toast.LENGTH_LONG).show();
         startActivity(result);
-
+        finish();
 
     }
 
@@ -183,11 +184,10 @@ public class Activity_New_Staff extends AppCompatActivity {
 
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.login_layout, null);
-         username_txt = dialogView.findViewById(R.id.username);
-         password_txt = dialogView.findViewById(R.id.password);
+        username_txt = dialogView.findViewById(R.id.username);
+        password_txt = dialogView.findViewById(R.id.password);
         final Button cancel = dialogView.findViewById(R.id.cancel);
         final Button login = dialogView.findViewById(R.id.login);
-
 
 
         builder.setView(dialogView);
@@ -339,7 +339,6 @@ public class Activity_New_Staff extends AppCompatActivity {
 
         return errorMsg;
     }
-
 
 
 }

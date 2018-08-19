@@ -25,83 +25,81 @@
             android:textStyle="bold" />
 
 
-          <TextView
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:padding="16dp"
-              android:text="Username"
-              android:textColor="@android:color/black"
-              android:textSize="20sp"
-              android:textStyle="bold" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Username"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
 
+        <EditText
 
-          <EditText
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sell"
+            android:inputType="textPersonName"
+            android:padding="16dp"
+            android:textColor="@android:color/black" />
 
-              android:id="@+id/username"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@drawable/sell"
-              android:inputType="textPersonName"
-              android:padding="16dp"
-              android:textColor="@android:color/black" />
-
-          <TextView
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:padding="16dp"
-              android:text="Password"
-              android:textColor="@android:color/black"
-              android:textSize="20sp"
-              android:textStyle="bold" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Password"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/etPasswordLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:passwordToggleEnabled="true"
-            >
+            app:passwordToggleEnabled="true">
 
-          <EditText
-              android:id="@+id/password"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@drawable/sell"
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sell"
 
-              android:inputType="textPassword"
-              android:padding="16dp"
-              android:textColor="@android:color/black" />
+                android:inputType="textPassword"
+                android:padding="16dp"
+                android:textColor="@android:color/black" />
         </android.support.design.widget.TextInputLayout>
 
-          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-               android:layout_width="match_parent"
-               android:layout_height="match_parent"
-               android:gravity="bottom"
-              android:layout_marginTop="@dimen/_30sdp"
-               android:orientation="horizontal">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:gravity="bottom"
+            android:orientation="horizontal">
 
-               <Button
-                   android:id="@+id/cancel"
-                   android:layout_width="0dp"
-                   android:layout_height="wrap_content"
-                   android:layout_weight="1"
-                   android:background="#cc0605"
-                   android:text="Cancel"
-                   android:textAllCaps="false"
-                   android:textColor="@android:color/white" />
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#cc0605"
+                android:text="Cancel"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
 
-               <Button
+            <Button
 
-                   android:id="@+id/login"
-                   android:layout_width="0dp"
-                   android:layout_height="wrap_content"
-                   android:layout_weight="1"
-                   android:background="#308446"
-                   android:text="Login"
-                   android:textAllCaps="false"
-                   android:textColor="@android:color/white" />
+                android:id="@+id/login"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#308446"
+                android:text="Login"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
 
-           </LinearLayout>
+        </LinearLayout>
 
 
     </LinearLayout>

@@ -15,7 +15,7 @@ import com.microblink.uisettings.DocumentUISettings;
 import com.wizag.ocrproject.helper.GPSLocation;
 import com.wizag.ocrproject.R;
 
-public class MainActivity extends AppCompatActivity {
+public class Activity_Scan extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 100;
     private MrtdRecognizer mRecognizer;
     private RecognizerBundle mRecognizerBundle;

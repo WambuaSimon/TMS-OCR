@@ -15,17 +15,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:gravity="center"
-            android:padding="6dp"
-            android:text="Check in to a site"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="Site Name"
             android:textColor="@android:color/black"
@@ -33,12 +22,12 @@
             android:textStyle="bold" />
 
 
-        <TextView
+        <EditText
             android:id="@+id/site"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/sell"
-            android:inputType="textPersonName"
+            android:inputType="textCapSentences"
             android:padding="16dp"
             android:textColor="@android:color/black" />
 
@@ -46,18 +35,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Description"
+            android:text="Description (optional)"
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
 
 
-        <TextView
+        <EditText
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/sell"
-            android:inputType="textPersonName"
+            android:inputType="textCapSentences"
             android:padding="16dp"
             android:textColor="@android:color/black" />
 
