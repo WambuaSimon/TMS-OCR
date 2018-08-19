@@ -73,6 +73,36 @@
               android:textColor="@android:color/black" />
         </android.support.design.widget.TextInputLayout>
 
+          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:gravity="bottom"
+              android:layout_marginTop="@dimen/_30sdp"
+               android:orientation="horizontal">
+
+               <Button
+                   android:id="@+id/cancel"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1"
+                   android:background="#cc0605"
+                   android:text="Cancel"
+                   android:textAllCaps="false"
+                   android:textColor="@android:color/white" />
+
+               <Button
+
+                   android:id="@+id/login"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1"
+                   android:background="#308446"
+                   android:text="Login"
+                   android:textAllCaps="false"
+                   android:textColor="@android:color/white" />
+
+           </LinearLayout>
+
 
     </LinearLayout>
 </ScrollView>

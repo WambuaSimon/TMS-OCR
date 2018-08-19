@@ -11,10 +11,12 @@ import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -32,6 +34,8 @@ import com.wizag.ocrproject.network.ApiInterface;
 import com.wizag.ocrproject.pojo.AuthUser;
 
 import java.util.concurrent.TimeoutException;
+
+import javax.xml.validation.Validator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,10 +58,13 @@ public class Activity_New_Staff extends AppCompatActivity {
     public static final String TOKEN_TYPE = "tokenType";
     String access_token, refresh_token, token_type;
     //String username = "admin@admin.com";
-    String username, password;
+    String login_username, login_password;
     SharedPreferences prefs;
 
     //String password = "password";
+
+     EditText username_txt;
+     EditText password_txt;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +72,7 @@ public class Activity_New_Staff extends AppCompatActivity {
         setContentView(R.layout.activity_new_staff);
 
         scan = findViewById(R.id.scan);
+
 
         isNetworkConnectionAvailable();
         gps = new GPSLocation(this);
@@ -171,41 +179,62 @@ public class Activity_New_Staff extends AppCompatActivity {
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();*/
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(Activity_New_Staff.this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(Activity_New_Staff.this);
 
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.login_layout, null);
-        final EditText username_txt = findViewById(R.id.username);
-        final EditText password_txt = findViewById(R.id.password);
+         username_txt = dialogView.findViewById(R.id.username);
+         password_txt = dialogView.findViewById(R.id.password);
+        final Button cancel = dialogView.findViewById(R.id.cancel);
+        final Button login = dialogView.findViewById(R.id.login);
+
+
 
         builder.setView(dialogView);
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                /*validate employee fields*/
-                username = username_txt.getText().toString();
-                password = password_txt.getText().toString();
+        builder.setCancelable(false);
 
-                if (username.isEmpty()) {
-                    username_txt.setError("Enter Username");
-                } else if (password.isEmpty()) {
-                    password_txt.setError("Enter password");
-                } else {
+        login.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                login_username = username_txt.getText().toString();
+                login_password = password_txt.getText().toString();
+                if (validateUserName(login_username) && validatePassword(login_password)) {
                     loginUser();
+//                    Toast.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
 
                 }
-
-
             }
-        })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         builder.show();
 
 
+    }
+
+    private boolean validateUserName(String username) {
+        if (username.length() == 0) {
+            username_txt.requestFocus();
+            username_txt.setError("Username cannot be empty");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validatePassword(String password) {
+        if (password.length() == 0) {
+            username_txt.requestFocus();
+            username_txt.setError("Password cannot be empty");
+            return false;
+        }
+        return true;
     }
 
     private void loginUser() {
@@ -220,7 +249,7 @@ public class Activity_New_Staff extends AppCompatActivity {
 
         ApiInterface service = retrofit.create(ApiInterface.class);
         // Call<AuthUser> call = service.loginUser("admin@cosand.com", "Qwerty123!","password", "2", "GEf81B8TnpPDibW4NKygaatvBG3RmbYSaJf8SZTA");
-        Call<AuthUser> call = service.loginUser(username, password, "password", "2", "76lIuQb2Z8LvrYgYMq8VKc00VHr2G0dmqEMLPH1Y");
+        Call<AuthUser> call = service.loginUser(login_username, login_password, "password", "2", "76lIuQb2Z8LvrYgYMq8VKc00VHr2G0dmqEMLPH1Y");
         call.enqueue(new Callback<AuthUser>() {
             @Override
             public void onResponse(Call<AuthUser> call, Response<AuthUser> response) {
@@ -310,4 +339,7 @@ public class Activity_New_Staff extends AppCompatActivity {
 
         return errorMsg;
     }
+
+
+
 }
