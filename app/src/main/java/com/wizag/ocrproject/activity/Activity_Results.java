@@ -88,7 +88,7 @@ public class Activity_Results extends AppCompatActivity {
     String checkout_URL = "http://timetrax.wizag.biz/api/v1/checkout_employee";
     String f_name_remote, l_name_remote;
     int id_no_remote;
-    ProgressDialog pDialog;
+    //    ProgressDialog pDialog;
     int flag_checkin = 1;
     int flag_checkout = 0;
     int flag;
@@ -169,9 +169,9 @@ public class Activity_Results extends AppCompatActivity {
                 if (!db.rowIdExists(scanned_id_no)) {
 
                     searchWorker();
-                    checkinUser();
-                    startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
-                    finish();
+//                    checkinUser();
+                   /* startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
+                    finish();*/
 
 
                 } else if (db.rowIdExists(scanned_id_no)) {
@@ -190,8 +190,10 @@ public class Activity_Results extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int id) {
 
                                         createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkout);
-                                        Toast.makeText(getApplicationContext(), "user checked out successfully", Toast.LENGTH_SHORT).show();
-                                        finish();
+                                        checkoutUser();
+
+                                       /* Toast.makeText(getApplicationContext(), "user checked out successfully", Toast.LENGTH_SHORT).show();
+                                        finish();*/
                                     }
                                 })
                                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -208,9 +210,11 @@ public class Activity_Results extends AppCompatActivity {
                                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
 
+
                                         createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkin);
-                                        Toast.makeText(getApplicationContext(), "user checked in successfully", Toast.LENGTH_SHORT).show();
-                                        finish();
+                                        checkinUser();
+                                      /*  Toast.makeText(getApplicationContext(), "user checked in successfully", Toast.LENGTH_SHORT).show();
+                                        finish();*/
                                     }
                                 })
                                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -346,10 +350,18 @@ public class Activity_Results extends AppCompatActivity {
                             l_name_remote = employee.getString("last_name");
                             id_no_remote = employee.getInt("id_number");
 
+                            Toast.makeText(getApplicationContext(), "Employee Found and added to local database", Toast.LENGTH_SHORT).show();
+                            /*save them to local db*/
+                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
+
+                            checkinUser();
+                            /*send their details to server*/
+
+
                         } else if (exists.equalsIgnoreCase("false")) {
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Results.this);
-                            builder.setTitle("Add Employee").setMessage("Employee:\t" + scanned_name + "does not exist in the system, please add them").setCancelable(false)
+                            builder.setTitle("Add Employee").setMessage("Employee:\t" + scanned_name + "\tdoes not exist in the system, please add them").setCancelable(false)
                                     .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             startActivity(new Intent(getApplicationContext(), Activity_New_Staff.class));
@@ -403,7 +415,7 @@ public class Activity_Results extends AppCompatActivity {
     public void checkinUser() {
 
         com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_Results.this);
-        pDialog = new ProgressDialog(Activity_Results.this);
+        final ProgressDialog pDialog = new ProgressDialog(Activity_Results.this);
         pDialog.setMessage("Loading...");
         pDialog.setCancelable(false);
 //        pDialog.setIndeterminate(false);
@@ -421,9 +433,9 @@ public class Activity_Results extends AppCompatActivity {
                             String success_message = data.getString("message");
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
-                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
+//                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
-                            finish();
+//                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -447,7 +459,7 @@ public class Activity_Results extends AppCompatActivity {
                 params.put("id_no", scanned_id_no);
                 params.put("time_in", time);
                 params.put("date_in", date);
-                params.put("site_id", site);
+                params.put("site_id", "1");
 
                 //params.put("code", "blst786");
                 //  params.put("")
@@ -460,11 +472,11 @@ public class Activity_Results extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    @Override
+   /* @Override
     protected void onDestroy() {
         super.onDestroy();
         pDialog.dismiss();
-    }
+    }*/
 
     /*@Override
     protected void onPause() {
@@ -475,7 +487,7 @@ public class Activity_Results extends AppCompatActivity {
     public void checkoutUser() {
 
         com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_Results.this);
-        pDialog = new ProgressDialog(Activity_Results.this);
+        final ProgressDialog pDialog = new ProgressDialog(Activity_Results.this);
         pDialog.setMessage("Loading...");
         pDialog.setCancelable(false);
 //        pDialog.setIndeterminate(false);
@@ -491,12 +503,12 @@ public class Activity_Results extends AppCompatActivity {
                             pDialog.dismiss();
                             JSONObject data = jsonObject.getJSONObject("data");
                             String success_message = data.getString("message");
-                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkout);
+//                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkout);
 //
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
-                            finish();
+//                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -520,7 +532,7 @@ public class Activity_Results extends AppCompatActivity {
                 params.put("id_no", scanned_id_no);
                 params.put("time_out", time);
                 params.put("date_out", date);
-                params.put("site_id", site);
+                params.put("site_id", "1");
 
                 //params.put("code", "blst786");
                 //  params.put("")

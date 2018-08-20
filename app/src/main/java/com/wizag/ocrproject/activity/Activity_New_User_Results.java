@@ -71,7 +71,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
     DatabaseHelper db;
     Bitmap photo, bitmap;
     byte[] id_photo;
-    String scanned_id_to_int;
+    int scanned_id_to_int;
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     String wage_txt;
@@ -263,6 +263,12 @@ public class Activity_New_User_Results extends AppCompatActivity {
         alertDialog.show();
     }
 
+    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, String site, byte[] image, int flag)
+
+    {
+        long id = db.insertWorker(new Worker(id_no, flag, f_name, l_name, location, time, date, site, image));
+    }
+
     private void registerUser() {
 
         com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_New_User_Results.this);
@@ -284,8 +290,8 @@ public class Activity_New_User_Results extends AppCompatActivity {
                             String success_message = data.getString("message");
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
-                            /*save user to local db*/
-//                            createWorker(scanned_id_to_int, scanned_name, current_location, time, date, wage_txt, dob_txt, id_photo,flag_checkin);
+                            /*save user to local db and check in*/
+                            createEmployee(scanned_id_to_int, scanned_name, current_location, time, date, wage_txt, dob_txt, id_photo,flag_checkin);
 
                             /*check in user*/
 
@@ -379,7 +385,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
                 params.put("id_no", scanned_id_no);
                 params.put("time_in", time);
                 params.put("date_in", date);
-                params.put("site_id", site_id);
+                params.put("site_id", "1");
 
                 //params.put("code", "blst786");
                 //  params.put("")
