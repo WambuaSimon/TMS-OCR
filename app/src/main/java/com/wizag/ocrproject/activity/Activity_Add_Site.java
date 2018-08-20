@@ -60,8 +60,8 @@ public class Activity_Add_Site extends AppCompatActivity {
 
                 if (validateSiteName(site_txt)) {
                     /*post site to db*/
-                    registerUser();
 
+                    AddSite();
                 }
             }
         });
@@ -77,10 +77,10 @@ public class Activity_Add_Site extends AppCompatActivity {
         return true;
     }
 
-    private void registerUser() {
+    public void AddSite() {
 
         com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_Add_Site.this);
-        final ProgressDialog pDialog = new ProgressDialog(this);
+        final ProgressDialog pDialog = new ProgressDialog(Activity_Add_Site.this);
         pDialog.setMessage("Loading...");
         pDialog.setCancelable(false);
 //        pDialog.setIndeterminate(false);
@@ -96,26 +96,25 @@ public class Activity_Add_Site extends AppCompatActivity {
                             pDialog.dismiss();
                             JSONObject data = jsonObject.getJSONObject("data");
                             String success_message = data.getString("message");
-
-
-                            Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_SHORT).show();
-
-                            startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
-                            finish();
+                            // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
+                            //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
+//                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
+                            Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
+//                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
-
+                        //Toast.makeText(Activity_Buy.this, "", Toast.LENGTH_LONG).show();
                     }
                 }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
-                Toast.makeText(Activity_Add_Site.this, "Error in adding site", Toast.LENGTH_LONG).show();
-
                 pDialog.dismiss();
+                Toast.makeText(Activity_Add_Site.this, "An Error Occurred", Toast.LENGTH_LONG).show();
+                finish();
+
             }
         }) {
             //adding parameters to the request
@@ -127,6 +126,8 @@ public class Activity_Add_Site extends AppCompatActivity {
                 params.put("lt", latitude_txt);
                 params.put("ld", longitude_txt);
 
+                //params.put("code", "blst786");
+                //  params.put("")
                 return params;
             }
 

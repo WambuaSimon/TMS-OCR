@@ -112,6 +112,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
 
         scanned_name = getIntent().getStringExtra("Name");
         scanned_id_no = getIntent().getStringExtra("Id");
+        scanned_id_to_int = Integer.parseInt(scanned_id_no);
         current_location = getIntent().getStringExtra("Location");
         dob_txt = getIntent().getStringExtra("Dob");
         /*split names*/
@@ -263,10 +264,10 @@ public class Activity_New_User_Results extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, String site, byte[] image, int flag)
+    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, String site,String wage, byte[] image, int flag)
 
     {
-        long id = db.insertWorker(new Worker(id_no, flag, f_name, l_name, location, time, date, site, image));
+        long id = db.insertWorker(new Worker(id_no, flag, f_name, l_name, location, time, date, site,wage, image));
     }
 
     private void registerUser() {
@@ -291,15 +292,12 @@ public class Activity_New_User_Results extends AppCompatActivity {
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
                             /*save user to local db and check in*/
-                            createEmployee(scanned_id_to_int, scanned_name, current_location, time, date, wage_txt, dob_txt, id_photo,flag_checkin);
 
                             /*check in user*/
 
 
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_SHORT).show();
                             checkinUser();
-                            startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
-                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -359,8 +357,16 @@ public class Activity_New_User_Results extends AppCompatActivity {
                             String success_message = data.getString("message");
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
-
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_SHORT).show();
+//                            createEmployee(scanned_id_to_int, scanned_name, current_location, time, date, wage_txt, dob_txt, id_photo,flag_checkin);
+
+                            createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site_id,wage_txt, id_photo, flag_checkin);
+
+                            startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
+                            finish();
+
+
+
 //                            finish();
 
                         } catch (JSONException e) {

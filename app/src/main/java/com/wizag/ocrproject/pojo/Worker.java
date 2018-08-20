@@ -64,6 +64,19 @@ public class Worker {
         this.image = image;
     }
 
+    public Worker(int id_no, int flag, String f_name, String l_name, String location, String time, String date, String site, String wage, byte[] image) {
+        this.id_no = id_no;
+        this.flag = flag;
+        this.f_name = f_name;
+        this.l_name = l_name;
+        this.location = location;
+        this.time = time;
+        this.date = date;
+        this.site = site;
+        this.wage = wage;
+        this.image = image;
+    }
+
     public int getId() {
         return id;
     }
