@@ -151,7 +151,6 @@
 
 
             <ImageView
-                android:id="@+id/take_id_image"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_gravity="end"

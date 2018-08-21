@@ -19,6 +19,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.wizag.ocrproject.BuildConfig;
 import com.wizag.ocrproject.database.DatabaseHelper;
 import com.wizag.ocrproject.helper.GPSLocation;
 import com.wizag.ocrproject.R;
@@ -92,6 +94,8 @@ public class Activity_Results extends AppCompatActivity {
     int flag_checkin = 1;
     int flag_checkout = 0;
     int flag;
+    SharedPreferences prefs;
+    String encoded_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +110,6 @@ public class Activity_Results extends AppCompatActivity {
         date = divide[0]; //2017-03-08
         time = divide[1]; // 13:27:00
 
-//        Toast.makeText(getApplicationContext(), "" + date, Toast.LENGTH_SHORT).show();
 
         mAdapter = new WorkerAdapter(this, workersList);
 
@@ -143,9 +146,9 @@ public class Activity_Results extends AppCompatActivity {
             }
         });
 
+        prefs = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        int site_id = prefs.getInt("id", 0);
 
-        SharedPreferences sp = getSharedPreferences("site_name", MODE_PRIVATE);
-        site = sp.getString("site_id", "");
 
 //        Toast.makeText(getApplicationContext(), ""+site, Toast.LENGTH_SHORT).show();
 
@@ -160,11 +163,17 @@ public class Activity_Results extends AppCompatActivity {
 
 
                 /*convert image bitmap to byte[]*/
-                bitmap = ((BitmapDrawable) id_image.getDrawable()).getBitmap();
+                /*bitmap = ((BitmapDrawable) id_image.getDrawable()).getBitmap();
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
                 id_photo = outputStream.toByteArray();
+*/
+                bitmap = ((BitmapDrawable) id_image.getDrawable()).getBitmap();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                id_photo = byteArrayOutputStream.toByteArray();
 
+                encoded_image = Base64.encodeToString(id_photo, Base64.DEFAULT);
 
                 if (!db.rowIdExists(scanned_id_no)) {
 
@@ -231,6 +240,7 @@ public class Activity_Results extends AppCompatActivity {
 
             }
         });
+
     }
 
 
@@ -435,7 +445,7 @@ public class Activity_Results extends AppCompatActivity {
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
 //                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
-//                            finish();
+                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -448,7 +458,7 @@ public class Activity_Results extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 pDialog.dismiss();
                 Toast.makeText(Activity_Results.this, "An Error Occurred", Toast.LENGTH_LONG).show();
-                finish();
+//                finish();
 
             }
         }) {
@@ -508,7 +518,7 @@ public class Activity_Results extends AppCompatActivity {
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
-//                            finish();
+                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -521,7 +531,7 @@ public class Activity_Results extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 pDialog.dismiss();
                 Toast.makeText(Activity_Results.this, "An Error Occurred", Toast.LENGTH_LONG).show();
-                finish();
+//                finish();
 
             }
         }) {

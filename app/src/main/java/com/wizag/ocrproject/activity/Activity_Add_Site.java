@@ -42,7 +42,7 @@ public class Activity_Add_Site extends AppCompatActivity {
             double longitude = gps.getLongitude();
             latitude_txt = String.valueOf(latitude);
             longitude_txt = String.valueOf(longitude);
-//            location = latitude + "," + longitude;
+            String location = latitude + "," + longitude;
 //            Toast.makeText(getApplicationContext(), "" + location, Toast.LENGTH_SHORT).show();
 
         } else {
@@ -100,8 +100,8 @@ public class Activity_Add_Site extends AppCompatActivity {
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
 //                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
-//                            finish();
-
+                            startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
+                            finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -112,8 +112,8 @@ public class Activity_Add_Site extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 pDialog.dismiss();
-                Toast.makeText(Activity_Add_Site.this, "An Error Occurred", Toast.LENGTH_LONG).show();
-                finish();
+                Toast.makeText(Activity_Add_Site.this, "An Error Occurred" + error.getMessage(), Toast.LENGTH_LONG).show();
+//                finish();
 
             }
         }) {
@@ -121,7 +121,7 @@ public class Activity_Add_Site extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("site", site_txt);
+                params.put("name", site_txt);
                 params.put("description", description_txt);
                 params.put("lt", latitude_txt);
                 params.put("ld", longitude_txt);

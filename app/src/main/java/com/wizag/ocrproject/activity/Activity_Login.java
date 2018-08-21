@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,8 +31,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.wizag.ocrproject.BuildConfig;
 import com.wizag.ocrproject.R;
+import com.wizag.ocrproject.helper.GPSLocation;
 import com.wizag.ocrproject.helper.SessionManager;
 import com.wizag.ocrproject.network.APIClient;
 import com.wizag.ocrproject.network.ApiInterface;
@@ -59,6 +62,7 @@ import static com.wizag.ocrproject.network.APIClient.BASE_URL;
 public class Activity_Login extends AppCompatActivity {
 
     String Sites_Url = "http://timetrax.wizag.biz/api/v1/sitesapi";
+    String search_sites_url = "http://timetrax.wizag.biz/api/v1/get_distance";
     Button checkin;
     TextView site, description;
     String site_lt, site_ld, site_name, site_description;
@@ -71,8 +75,9 @@ public class Activity_Login extends AppCompatActivity {
     //String username = "admin@admin.com";
 
     SharedPreferences prefs;
-
+    GPSLocation gps;
     //String password = "password";
+    Double latitude, longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,17 +88,37 @@ public class Activity_Login extends AppCompatActivity {
         site = findViewById(R.id.site);
         description = findViewById(R.id.description);
 
+        gps = new GPSLocation(this);
+        if (gps.canGetLocation()) {
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+//            location = latitude + "," + longitude;
+//            Toast.makeText(getApplicationContext(), "" + location, Toast.LENGTH_SHORT).show();
+
+        } else {
+            gps.showSettingsAlert();
+        }
+
         isNetworkConnectionAvailable();
 //        loadSpinnerData(URL);
 
-        getSites();
+        SearchSites();
 
 
         checkin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
-                finish();
+                String site_txt = site.getText().toString();
+
+                if (site_txt.matches("")) {
+                    Toast.makeText(getApplicationContext(), "No site found", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
+                    finish();
+                }
+
+
             }
         });
         prefs = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
@@ -132,96 +157,96 @@ public class Activity_Login extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void getSites() {
-        isNetworkConnectionAvailable();
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        final ProgressDialog pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading...");
-        pDialog.setCancelable(false);
-        pDialog.show();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Sites_Url, new com.android.volley.Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-
-
-                    JSONObject jsonObject = new JSONObject(response);
-                    pDialog.hide();
-                    if (jsonObject != null) {
-                        JSONObject data = jsonObject.getJSONObject("data");
-                        JSONArray sites = data.getJSONArray("sites");
-
-                        /*get longitude and latitudes from DB*/
-
-                        if (sites != null) {
-                            for (int i = 0; i < sites.length(); i++) {
-
-                                JSONObject site_items = sites.getJSONObject(i);
-
-                                site_lt = site_items.getString("lt");
-                                site_ld = site_items.getString("ld");
-                                site_name = site_items.getString("name");
-                                site_description = site_items.getString("description");
-
-                                site.setText(site_name);
-                                description.setText(site_description);
-
-
-                            }
-
-
-                        } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Login.this);
-                            builder.setTitle("Site does not exist!").setMessage("Login to add site").setCancelable(false)
-                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-
-                                            //*show login dialog: if login is successful: show add site dialog*//*
-                                            loginToAddSite();
-
-
-                                        }
-                                    })
-                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            // User cancelled the dialog
-                                        }
-                                    });
-
-                            builder.show();
-                        }
-
-
-                    }
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_LONG).show();
-                pDialog.hide();
-            }
-
-
-        });
-
-
-        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
-
-
-        int socketTimeout = 30000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        stringRequest.setRetryPolicy(policy);
-        requestQueue.add(stringRequest);
-
-
-    }
+//    private void getSites() {
+//        isNetworkConnectionAvailable();
+//        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+//        final ProgressDialog pDialog = new ProgressDialog(this);
+//        pDialog.setMessage("Loading...");
+//        pDialog.setCancelable(false);
+//        pDialog.show();
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, Sites_Url, new com.android.volley.Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                try {
+//
+//
+//                    JSONObject jsonObject = new JSONObject(response);
+//                    pDialog.hide();
+//                    if (jsonObject != null) {
+//                        JSONObject data = jsonObject.getJSONObject("data");
+//                        JSONArray sites = data.getJSONArray("sites");
+//
+//                        /*get longitude and latitudes from DB*/
+//
+//                        if (sites != null) {
+//                            for (int i = 0; i < sites.length(); i++) {
+//
+//                                JSONObject site_items = sites.getJSONObject(i);
+//
+//                                site_lt = site_items.getString("lt");
+//                                site_ld = site_items.getString("ld");
+//                                site_name = site_items.getString("name");
+//                                site_description = site_items.getString("description");
+//
+//                                site.setText(site_name);
+//                                description.setText(site_description);
+//
+//
+//                            }
+//
+//
+//                        } else {
+//                            AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Login.this);
+//                            builder.setTitle("Site does not exist!").setMessage("Login to add site").setCancelable(false)
+//                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                                        public void onClick(DialogInterface dialog, int id) {
+//
+//                                            //*show login dialog: if login is successful: show add site dialog*//*
+//                                            loginToAddSite();
+//
+//
+//                                        }
+//                                    })
+//                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                                        public void onClick(DialogInterface dialog, int id) {
+//                                            // User cancelled the dialog
+//                                        }
+//                                    });
+//
+//                            builder.show();
+//                        }
+//
+//
+//                    }
+//
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new com.android.volley.Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                error.printStackTrace();
+//                Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_LONG).show();
+//                pDialog.hide();
+//            }
+//
+//
+//        });
+//
+//
+//        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+//
+//
+//        int socketTimeout = 30000;
+//        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+//        stringRequest.setRetryPolicy(policy);
+//        requestQueue.add(stringRequest);
+//
+//
+//    }
 
     private void loginToAddSite() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Login.this);
@@ -293,7 +318,8 @@ public class Activity_Login extends AppCompatActivity {
                         prefs.edit().putString(TOKEN_TYPE, token_type).apply();
 
                         /*redirect to add site activity*/
-
+                        startActivity(new Intent(getApplicationContext(), Activity_Add_Site.class));
+                        finish();
 
                     }
 
@@ -347,5 +373,96 @@ public class Activity_Login extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+
+    private void SearchSites() {
+
+        com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_Login.this);
+        final ProgressDialog pDialog = new ProgressDialog(Activity_Login.this);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+//        pDialog.setIndeterminate(false);
+        pDialog.show();
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, search_sites_url,
+                new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                            JSONObject jsonObject = new JSONObject(response);
+                            pDialog.dismiss();
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            String success_message = data.getString("message");
+
+                            if (success_message.equalsIgnoreCase("true")) {
+
+                                JSONObject siteObject = data.getJSONObject("site");
+                                String site_name = siteObject.getString("name");
+                                String site_description = siteObject.getString("description");
+
+                                site.setText(site_name);
+                                description.setText(site_description);
+
+
+//                                Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_SHORT).show();
+
+
+                            } else if (success_message.equalsIgnoreCase("false")) {
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Login.this);
+                                builder.setTitle("Site does not exist!").setMessage("Login to add site").setCancelable(false)
+                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+
+                                                //*show login dialog: if login is successful: show add site dialog*//*
+                                                loginToAddSite();
+
+
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                // User cancelled the dialog
+                                            }
+                                        });
+
+                                builder.show();
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        //Toast.makeText(Activity_Buy.this, "", Toast.LENGTH_LONG).show();
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                pDialog.dismiss();
+                Toast.makeText(Activity_Login.this, "An Error Occurred", Toast.LENGTH_LONG).show();
+//                finish();
+
+            }
+        }) {
+            //adding parameters to the request
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("lt", String.valueOf(latitude));
+                params.put("ld", String.valueOf(longitude));
+
+
+                //params.put("code", "blst786");
+                //  params.put("")
+                return params;
+            }
+
+
+        };
+// Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 }
