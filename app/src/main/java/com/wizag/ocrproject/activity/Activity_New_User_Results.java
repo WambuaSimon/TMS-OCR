@@ -39,6 +39,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.wizag.ocrproject.BuildConfig;
 import com.wizag.ocrproject.R;
 import com.wizag.ocrproject.database.DatabaseHelper;
 import com.wizag.ocrproject.helper.GPSLocation;
@@ -83,9 +84,10 @@ public class Activity_New_User_Results extends AppCompatActivity {
     String names[], f_name, l_name;
     String worker_image;
     String checkIn_URL = "http://timetrax.wizag.biz/api/v1/checkin_employee";
-    String site_id;
+    int site_id;
     int flag_checkin = 1;
     int flag_checkout = 0;
+    SharedPreferences prefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +99,10 @@ public class Activity_New_User_Results extends AppCompatActivity {
         isNetworkConnectionAvailable();
 
 
-//        loadSpinnerData(URL);
+        prefs = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        site_id = prefs.getInt("site_id", 0);
+
+        Toast.makeText(this, ""+site_id, Toast.LENGTH_SHORT).show();
 
         worker = new ArrayList<>();
         SiteName = new ArrayList<>();
@@ -138,8 +143,6 @@ public class Activity_New_User_Results extends AppCompatActivity {
         reg_date.setText(date);
         reg_time.setText(time);
 
-        SharedPreferences sp = getSharedPreferences("site_name", MODE_PRIVATE);
-        site_id = sp.getString("site_id", "");
 
         cancel = (Button) findViewById(R.id.cancel);
         save = (Button) findViewById(R.id.save);
@@ -152,6 +155,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
         });
 
         save.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
             @Override
             public void onClick(View view) {
                 /*save to both remote and local db*/
@@ -214,6 +218,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
            /* photo = (Bitmap) data.getExtras().get("data");
@@ -264,7 +269,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, String site,String wage, byte[] image, int flag)
+    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, int site,String wage, byte[] image, int flag)
 
     {
         long id = db.insertWorker(new Worker(id_no, flag, f_name, l_name, location, time, date, site,wage, image));
@@ -391,7 +396,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
                 params.put("id_no", scanned_id_no);
                 params.put("time_in", time);
                 params.put("date_in", date);
-                params.put("site_id", "1");
+                params.put("site_id", String.valueOf(site_id));
 
                 //params.put("code", "blst786");
                 //  params.put("")

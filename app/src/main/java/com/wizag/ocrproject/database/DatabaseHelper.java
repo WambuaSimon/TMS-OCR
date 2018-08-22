@@ -105,7 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LOCATION)),
                 cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME)),
                 cursor.getString(cursor.getColumnIndex(Worker.COLUMN_DATE)),
-                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_SITE)),
+                cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_SITE)),
                 cursor.getString(cursor.getColumnIndex(Worker.COLUMN_WAGE)),
                 cursor.getBlob(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));
 
@@ -136,7 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 worker.setLocation(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LOCATION)));
                 worker.setTime(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME)));
                 worker.setDate(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_DATE)));
-                worker.setSite(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_SITE)));
+                worker.setSite(cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_SITE)));
                 worker.setWage(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_WAGE)));
                 worker.setImage(cursor.getBlob(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));
                 worker.setFlag(cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));

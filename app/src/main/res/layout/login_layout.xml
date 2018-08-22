@@ -19,7 +19,7 @@
 
             android:gravity="center"
             android:padding="6dp"
-            android:text="Login to add an Employee"
+            android:text="Login to proceed"
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:textStyle="bold" />

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.net.ConnectivityManager;
 
 import android.net.NetworkInfo;
@@ -14,39 +15,27 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.wizag.ocrproject.BuildConfig;
 import com.wizag.ocrproject.R;
 import com.wizag.ocrproject.helper.GPSLocation;
-import com.wizag.ocrproject.helper.SessionManager;
-import com.wizag.ocrproject.network.APIClient;
+import com.wizag.ocrproject.helper.PrefKeys;
+import com.wizag.ocrproject.helper.PrefUtils;
 import com.wizag.ocrproject.network.ApiInterface;
-import com.wizag.ocrproject.network.MySingleton;
 import com.wizag.ocrproject.pojo.AuthUser;
-import com.wizag.ocrproject.pojo.SpinnerModel;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -88,10 +77,27 @@ public class Activity_Login extends AppCompatActivity {
         site = findViewById(R.id.site);
         description = findViewById(R.id.description);
 
+
+
         gps = new GPSLocation(this);
         if (gps.canGetLocation()) {
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
+
+            if(latitude == 0.0 && longitude==0.0){
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Please turn on Location services to continue");
+                builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+//                Toast.makeText(getApplicationContext(), "Ensure GPS is turned on!", Toast.LENGTH_SHORT).show();
+            }
 //            location = latitude + "," + longitude;
 //            Toast.makeText(getApplicationContext(), "" + location, Toast.LENGTH_SHORT).show();
 
@@ -157,96 +163,6 @@ public class Activity_Login extends AppCompatActivity {
         alertDialog.show();
     }
 
-//    private void getSites() {
-//        isNetworkConnectionAvailable();
-//        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-//        final ProgressDialog pDialog = new ProgressDialog(this);
-//        pDialog.setMessage("Loading...");
-//        pDialog.setCancelable(false);
-//        pDialog.show();
-//
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, Sites_Url, new com.android.volley.Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//                try {
-//
-//
-//                    JSONObject jsonObject = new JSONObject(response);
-//                    pDialog.hide();
-//                    if (jsonObject != null) {
-//                        JSONObject data = jsonObject.getJSONObject("data");
-//                        JSONArray sites = data.getJSONArray("sites");
-//
-//                        /*get longitude and latitudes from DB*/
-//
-//                        if (sites != null) {
-//                            for (int i = 0; i < sites.length(); i++) {
-//
-//                                JSONObject site_items = sites.getJSONObject(i);
-//
-//                                site_lt = site_items.getString("lt");
-//                                site_ld = site_items.getString("ld");
-//                                site_name = site_items.getString("name");
-//                                site_description = site_items.getString("description");
-//
-//                                site.setText(site_name);
-//                                description.setText(site_description);
-//
-//
-//                            }
-//
-//
-//                        } else {
-//                            AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Login.this);
-//                            builder.setTitle("Site does not exist!").setMessage("Login to add site").setCancelable(false)
-//                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                                        public void onClick(DialogInterface dialog, int id) {
-//
-//                                            //*show login dialog: if login is successful: show add site dialog*//*
-//                                            loginToAddSite();
-//
-//
-//                                        }
-//                                    })
-//                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                                        public void onClick(DialogInterface dialog, int id) {
-//                                            // User cancelled the dialog
-//                                        }
-//                                    });
-//
-//                            builder.show();
-//                        }
-//
-//
-//                    }
-//
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, new com.android.volley.Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                error.printStackTrace();
-//                Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_LONG).show();
-//                pDialog.hide();
-//            }
-//
-//
-//        });
-//
-//
-//        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
-//
-//
-//        int socketTimeout = 30000;
-//        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-//        stringRequest.setRetryPolicy(policy);
-//        requestQueue.add(stringRequest);
-//
-//
-//    }
 
     private void loginToAddSite() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Login.this);
@@ -401,6 +317,9 @@ public class Activity_Login extends AppCompatActivity {
                                 JSONObject siteObject = data.getJSONObject("site");
                                 String site_name = siteObject.getString("name");
                                 String site_description = siteObject.getString("description");
+                                int site_id= siteObject.getInt("id");
+
+                                prefs.edit().putInt("site_id", site_id).apply();
 
                                 site.setText(site_name);
                                 description.setText(site_description);
@@ -442,7 +361,7 @@ public class Activity_Login extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 pDialog.dismiss();
-                Toast.makeText(Activity_Login.this, "An Error Occurred", Toast.LENGTH_LONG).show();
+                Toast.makeText(Activity_Login.this, "An Error Occurred" + error, Toast.LENGTH_LONG).show();
 //                finish();
 
             }
@@ -451,6 +370,8 @@ public class Activity_Login extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
+
+
                 params.put("lt", String.valueOf(latitude));
                 params.put("ld", String.valueOf(longitude));
 
@@ -465,4 +386,7 @@ public class Activity_Login extends AppCompatActivity {
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
+
+
+
 }

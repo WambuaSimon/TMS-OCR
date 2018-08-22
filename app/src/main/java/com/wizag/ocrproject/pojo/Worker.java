@@ -15,8 +15,8 @@ public class Worker {
     public static final String COLUMN_FLAG = "flag";
 
 
-    private int id,id_no, flag;
-    private String f_name, l_name, location, time, date, site, wage;
+    private int id,id_no, site,flag;
+    private String f_name, l_name, location, time, date, wage;
     private byte[] image;
 
     // Create table SQL query
@@ -38,7 +38,7 @@ public class Worker {
     public Worker() {
     }
 
-    public Worker(int id, int id_no, int flag, String f_name, String l_name, String location, String time, String date, String site, String wage, byte[] image) {
+    public Worker(int id, int id_no, int flag, String f_name, String l_name, String location, String time, String date, int site, String wage, byte[] image) {
         this.id = id;
         this.id_no = id_no;
         this.flag = flag;
@@ -52,7 +52,7 @@ public class Worker {
         this.image = image;
     }
 
-    public Worker(int id_no, int flag, String f_name, String l_name, String location, String time, String date, String site, byte[] image) {
+    public Worker(int id_no, int flag, String f_name, String l_name, String location, String time, String date, int site, byte[] image) {
         this.id_no = id_no;
         this.flag = flag;
         this.f_name = f_name;
@@ -64,7 +64,7 @@ public class Worker {
         this.image = image;
     }
 
-    public Worker(int id_no, int flag, String f_name, String l_name, String location, String time, String date, String site, String wage, byte[] image) {
+    public Worker(int id_no, int flag, String f_name, String l_name, String location, String time, String date, int site, String wage, byte[] image) {
         this.id_no = id_no;
         this.flag = flag;
         this.f_name = f_name;
@@ -141,11 +141,11 @@ public class Worker {
         this.date = date;
     }
 
-    public String getSite() {
+    public int getSite() {
         return site;
     }
 
-    public void setSite(String site) {
+    public void setSite(int site) {
         this.site = site;
     }
 

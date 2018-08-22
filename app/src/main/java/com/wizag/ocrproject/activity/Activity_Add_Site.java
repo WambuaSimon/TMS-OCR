@@ -1,7 +1,9 @@
 package com.wizag.ocrproject.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.wizag.ocrproject.BuildConfig;
 import com.wizag.ocrproject.R;
 import com.wizag.ocrproject.helper.GPSLocation;
 
@@ -30,6 +33,7 @@ public class Activity_Add_Site extends AppCompatActivity {
     String Post_Material = "http://timetrax.wizag.biz/api/v1/sitesapi";
     GPSLocation gps;
     String latitude_txt, longitude_txt;
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,7 @@ public class Activity_Add_Site extends AppCompatActivity {
                 }
             }
         });
+        prefs = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
 
     }
 
@@ -96,6 +101,11 @@ public class Activity_Add_Site extends AppCompatActivity {
                             pDialog.dismiss();
                             JSONObject data = jsonObject.getJSONObject("data");
                             String success_message = data.getString("message");
+
+                            int site_id = data.getInt("site_id");
+                            prefs.edit().putInt("site_id", site_id).apply();
+
+
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
 //                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);

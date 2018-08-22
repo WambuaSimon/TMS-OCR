@@ -96,7 +96,7 @@ public class Activity_Results extends AppCompatActivity {
     int flag;
     SharedPreferences prefs;
     String encoded_image;
-
+    int site_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,10 +147,10 @@ public class Activity_Results extends AppCompatActivity {
         });
 
         prefs = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-        int site_id = prefs.getInt("id", 0);
+         site_id = prefs.getInt("site_id", 0);
 
 
-//        Toast.makeText(getApplicationContext(), ""+site, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), ""+site_id, Toast.LENGTH_SHORT).show();
 
 
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -198,7 +198,7 @@ public class Activity_Results extends AppCompatActivity {
                                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
 
-                                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkout);
+                                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site_id, id_photo, flag_checkout);
                                         checkoutUser();
 
                                        /* Toast.makeText(getApplicationContext(), "user checked out successfully", Toast.LENGTH_SHORT).show();
@@ -220,7 +220,7 @@ public class Activity_Results extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int id) {
 
 
-                                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site, id_photo, flag_checkin);
+                                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site_id, id_photo, flag_checkin);
                                         checkinUser();
                                       /*  Toast.makeText(getApplicationContext(), "user checked in successfully", Toast.LENGTH_SHORT).show();
                                         finish();*/
@@ -326,7 +326,7 @@ public class Activity_Results extends AppCompatActivity {
         }
     }
 
-    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, String site, byte[] image, int flag)
+    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, int site, byte[] image, int flag)
 
     {
         long id = db.insertWorker(new Worker(id_no, flag, f_name, l_name, location, time, date, site, image));
@@ -362,7 +362,7 @@ public class Activity_Results extends AppCompatActivity {
 
                             Toast.makeText(getApplicationContext(), "Employee Found and added to local database", Toast.LENGTH_SHORT).show();
                             /*save them to local db*/
-                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
+                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site_id, id_photo, flag_checkin);
 
                             checkinUser();
                             /*send their details to server*/
@@ -469,7 +469,7 @@ public class Activity_Results extends AppCompatActivity {
                 params.put("id_no", scanned_id_no);
                 params.put("time_in", time);
                 params.put("date_in", date);
-                params.put("site_id", "1");
+                params.put("site_id", String.valueOf(site_id));
 
                 //params.put("code", "blst786");
                 //  params.put("")
