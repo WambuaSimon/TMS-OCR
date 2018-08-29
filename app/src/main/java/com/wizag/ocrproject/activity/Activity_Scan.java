@@ -17,7 +17,7 @@ import com.wizag.ocrproject.R;
 
 public class Activity_Scan extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 100;
-    private MrtdRecognizer mRecognizer;
+//    private MrtdRecognizer mRecognizer;
     private RecognizerBundle mRecognizerBundle;
     private MrtdRecognizer mMRTDRecognizer;
     GPSLocation gps;

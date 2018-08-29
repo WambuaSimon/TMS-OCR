@@ -115,6 +115,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return worker;
     }
 
+
+    public Worker getOnlyWorker(long id) {
+        // get readable database as we are not inserting anything
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[]{Worker.COLUMN_ID, Worker.COLUMN_FIRST_NAME, COLUMN_LAST_NAME, Worker.COLUMN_ID_NO, Worker.COLUMN_LOCATION,
+                        Worker.COLUMN_TIME, Worker.COLUMN_DATE, Worker.COLUMN_SITE, Worker.COLUMN_WAGE, Worker.COLUMN_IMAGE, Worker.COLUMN_FLAG},
+                Worker.COLUMN_ID_NO + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+
+       /* String query = "SELECT id_no from worker order by id DESC limit 1";
+        Cursor cursor = db.rawQuery(query,new String[]{String.valueOf(id)});
+*/
+        if (cursor != null)
+            cursor.moveToFirst();
+
+
+        // prepare note object
+        Worker worker = new Worker(
+                cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_ID)),
+                cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_ID_NO)),
+                cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_FLAG)),
+                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_FIRST_NAME)),
+                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LAST_NAME)),
+                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_LOCATION)),
+                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_TIME)),
+                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_DATE)),
+                cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_SITE)),
+                cursor.getString(cursor.getColumnIndex(Worker.COLUMN_WAGE)),
+                cursor.getBlob(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));
+
+        // close the db connection
+        cursor.close();
+
+        return worker;
+    }
+
+
     public List<Worker> getAllWorkers() {
         List<Worker> workers = new ArrayList<>();
 

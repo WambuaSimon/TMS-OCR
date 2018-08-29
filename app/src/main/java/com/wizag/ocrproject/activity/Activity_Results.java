@@ -50,6 +50,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -74,7 +75,7 @@ public class Activity_Results extends AppCompatActivity {
     protected Context context;
     DatabaseHelper db;
     Bitmap photo, bitmap;
-    byte[] id_photo;
+    byte[] id_photo, image_from_db;
     String scanned_id_no;
     String date_str, date, time;
     private static final String SHARED_PREF_SITE = "site_name";
@@ -97,6 +98,8 @@ public class Activity_Results extends AppCompatActivity {
     SharedPreferences prefs;
     String encoded_image;
     int site_id;
+    String wage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,11 +150,17 @@ public class Activity_Results extends AppCompatActivity {
         });
 
         prefs = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-         site_id = prefs.getInt("site_id", 0);
+        site_id = prefs.getInt("site_id", 0);
 
 
-        Toast.makeText(getApplicationContext(), ""+site_id, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "" + site_id, Toast.LENGTH_SHORT).show();
+        Worker existing_worker_new_image = db.getOnlyWorker(Long.parseLong(scanned_id_no));
 
+        image_from_db = existing_worker_new_image.getImage();
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(image_from_db);
+        Bitmap bitmap_image = BitmapFactory.decodeStream(inputStream);
+        id_image.setImageBitmap(bitmap_image);
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,12 +194,22 @@ public class Activity_Results extends AppCompatActivity {
 
                 } else if (db.rowIdExists(scanned_id_no)) {
 
+
+
                     Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
+                    Worker existing_worker_new = db.getOnlyWorker(Long.parseLong(scanned_id_no));
 
                     existing_date_txt = existing_worker.getDate();
                     flag = existing_worker.getFlag();
+
+
+//
                     String fname = existing_worker.getF_name();
                     String lname = existing_worker.getL_name();
+                    wage = existing_worker_new.getWage();
+//                    Toast.makeText(getApplicationContext(), ""+wage, Toast.LENGTH_SHORT).show();
+
+
 
                     if (flag == 1) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Results.this);
@@ -198,7 +217,7 @@ public class Activity_Results extends AppCompatActivity {
                                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
 
-                                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site_id, id_photo, flag_checkout);
+                                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site_id,wage, id_photo, flag_checkout);
                                         checkoutUser();
 
                                        /* Toast.makeText(getApplicationContext(), "user checked out successfully", Toast.LENGTH_SHORT).show();
@@ -220,7 +239,7 @@ public class Activity_Results extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int id) {
 
 
-                                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site_id, id_photo, flag_checkin);
+                                        createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site_id,wage, id_photo, flag_checkin);
                                         checkinUser();
                                       /*  Toast.makeText(getApplicationContext(), "user checked in successfully", Toast.LENGTH_SHORT).show();
                                         finish();*/
@@ -265,6 +284,7 @@ public class Activity_Results extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("No internet Connection");
         builder.setMessage("Please turn on internet connection to continue");
+
         builder.setNegativeButton("close", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -326,10 +346,10 @@ public class Activity_Results extends AppCompatActivity {
         }
     }
 
-    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, int site, byte[] image, int flag)
+    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, int site, String wage, byte[] image, int flag)
 
     {
-        long id = db.insertWorker(new Worker(id_no, flag, f_name, l_name, location, time, date, site, image));
+        long id = db.insertWorker(new Worker(id_no, flag, f_name, l_name, location, time, date, site,wage, image));
     }
 
 
@@ -362,7 +382,7 @@ public class Activity_Results extends AppCompatActivity {
 
                             Toast.makeText(getApplicationContext(), "Employee Found and added to local database", Toast.LENGTH_SHORT).show();
                             /*save them to local db*/
-                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site_id, id_photo, flag_checkin);
+                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site_id, wage,id_photo, flag_checkin);
 
                             checkinUser();
                             /*send their details to server*/

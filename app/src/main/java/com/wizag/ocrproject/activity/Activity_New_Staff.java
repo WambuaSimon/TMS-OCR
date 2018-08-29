@@ -249,7 +249,7 @@ public class Activity_New_Staff extends AppCompatActivity {
 
         ApiInterface service = retrofit.create(ApiInterface.class);
         // Call<AuthUser> call = service.loginUser("admin@cosand.com", "Qwerty123!","password", "2", "GEf81B8TnpPDibW4NKygaatvBG3RmbYSaJf8SZTA");
-        Call<AuthUser> call = service.loginUser(login_username, login_password, "password", "2", "76lIuQb2Z8LvrYgYMq8VKc00VHr2G0dmqEMLPH1Y");
+        Call<AuthUser> call = service.loginUser(login_username, login_password, "password", "2", "GEf81B8TnpPDibW4NKygaatvBG3RmbYSaJf8SZTA");
         call.enqueue(new Callback<AuthUser>() {
             @Override
             public void onResponse(Call<AuthUser> call, Response<AuthUser> response) {
@@ -318,6 +318,7 @@ public class Activity_New_Staff extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("No internet Connection");
         builder.setMessage("Please turn on internet connection to continue");
+
         builder.setNegativeButton("close", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

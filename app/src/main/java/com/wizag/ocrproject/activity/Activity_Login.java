@@ -25,6 +25,8 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.microblink.util.RecognizerCompatibility;
+import com.microblink.util.RecognizerCompatibilityStatus;
 import com.wizag.ocrproject.BuildConfig;
 import com.wizag.ocrproject.R;
 import com.wizag.ocrproject.helper.GPSLocation;
@@ -73,10 +75,15 @@ public class Activity_Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // check if BlinkID is supported on the device
+        RecognizerCompatibilityStatus supportStatus = RecognizerCompatibility.getRecognizerCompatibilityStatus(this);
+        if (supportStatus != RecognizerCompatibilityStatus.RECOGNIZER_SUPPORTED) {
+            Toast.makeText(this, "BlinkID is not supported! Reason: " + supportStatus.name(), Toast.LENGTH_LONG).show();
+        }
+
         checkin = findViewById(R.id.checkin);
         site = findViewById(R.id.site);
         description = findViewById(R.id.description);
-
 
 
         gps = new GPSLocation(this);
@@ -84,10 +91,11 @@ public class Activity_Login extends AppCompatActivity {
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
 
-            if(latitude == 0.0 && longitude==0.0){
+            if (latitude == 0.0 && longitude == 0.0) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("Please turn on Location services to continue");
+                builder.setCancelable(false);
                 builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -153,6 +161,7 @@ public class Activity_Login extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("No internet Connection");
         builder.setMessage("Please turn on internet connection to continue");
+        builder.setCancelable(false);
         builder.setNegativeButton("close", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -216,7 +225,7 @@ public class Activity_Login extends AppCompatActivity {
 
         ApiInterface service = retrofit.create(ApiInterface.class);
         // Call<AuthUser> call = service.loginUser("admin@cosand.com", "Qwerty123!","password", "2", "GEf81B8TnpPDibW4NKygaatvBG3RmbYSaJf8SZTA");
-        Call<AuthUser> call = service.loginUser(login_username, login_password, "password", "2", "76lIuQb2Z8LvrYgYMq8VKc00VHr2G0dmqEMLPH1Y");
+        Call<AuthUser> call = service.loginUser(login_username, login_password, "password", "2", "GEf81B8TnpPDibW4NKygaatvBG3RmbYSaJf8SZTA");
         call.enqueue(new Callback<AuthUser>() {
             @Override
             public void onResponse(Call<AuthUser> call, Response<AuthUser> response) {
@@ -317,7 +326,7 @@ public class Activity_Login extends AppCompatActivity {
                                 JSONObject siteObject = data.getJSONObject("site");
                                 String site_name = siteObject.getString("name");
                                 String site_description = siteObject.getString("description");
-                                int site_id= siteObject.getInt("id");
+                                int site_id = siteObject.getInt("id");
 
                                 prefs.edit().putInt("site_id", site_id).apply();
 
@@ -361,7 +370,7 @@ public class Activity_Login extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 pDialog.dismiss();
-                Toast.makeText(Activity_Login.this, "An Error Occurred" + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(Activity_Login.this, "An Error Occurred", Toast.LENGTH_LONG).show();
 //                finish();
 
             }
@@ -386,7 +395,6 @@ public class Activity_Login extends AppCompatActivity {
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
-
 
 
 }

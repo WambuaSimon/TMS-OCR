@@ -102,7 +102,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
         prefs = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         site_id = prefs.getInt("site_id", 0);
 
-        Toast.makeText(this, ""+site_id, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, ""+site_id, Toast.LENGTH_SHORT).show();
 
         worker = new ArrayList<>();
         SiteName = new ArrayList<>();
