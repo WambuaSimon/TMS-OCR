@@ -52,6 +52,7 @@ import static com.wizag.ocrproject.network.APIClient.BASE_URL;
 
 public class Activity_Login extends AppCompatActivity {
 
+
     String Sites_Url = "http://timetrax.wizag.biz/api/v1/sitesapi";
     String search_sites_url = "http://timetrax.wizag.biz/api/v1/get_distance";
     Button checkin;

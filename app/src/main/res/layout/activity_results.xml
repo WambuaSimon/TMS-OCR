@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:background="@drawable/sell"
+            android:background="@drawable/rounded_editor"
             android:padding="10dp"
             android:textColor="@android:color/black"
             android:textSize="18sp"
@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:background="@drawable/sell"
+            android:background="@drawable/rounded_editor"
             android:padding="10dp"
             android:textColor="@android:color/black"
             android:textSize="18sp"
@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="#308446"
+            android:background="@drawable/rounded_button"
             android:weightSum="1"
 
             android:orientation="horizontal"
@@ -145,6 +145,7 @@
                 android:layout_height="@dimen/_200sdp"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_10sdp"
+                android:src="@drawable/person"
                 android:background="@android:color/darker_gray"
                 android:padding="@dimen/_16sdp"/>
 
@@ -169,7 +170,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#cc0605"
+                android:background="@drawable/cancel_button"
                 android:text="Discard"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
@@ -180,9 +181,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#308446"
+                android:background="@drawable/rounded_button"
                 android:text="Submit"
                 android:textAllCaps="false"
+                android:layout_marginLeft="@dimen/_70sdp"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>

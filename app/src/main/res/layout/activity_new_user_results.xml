@@ -28,8 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:background="@drawable/sell"
-            android:padding="10dp"
+            android:background="@drawable/rounded_editor"
+            android:padding="7dp"
 
             android:textColor="@android:color/black"
             android:textSize="18sp"
@@ -51,8 +51,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:background="@drawable/sell"
-            android:padding="10dp"
+            android:background="@drawable/rounded_editor"
+            android:padding="7dp"
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -100,7 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:background="@drawable/sell"
+            android:background="@drawable/rounded_editor"
             android:padding="10dp"
             android:inputType="number"
             android:textColor="@android:color/black"
@@ -167,9 +167,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="#308446"
-            android:weightSum="1"
 
+            android:weightSum="1"
+            android:background="@drawable/rounded_button"
             android:orientation="horizontal"
             android:padding="10dp">
 
@@ -181,6 +181,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_weight="0.5"
                 android:text="Time"
+
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
@@ -206,24 +207,27 @@
 
             <Button
                 android:id="@+id/cancel"
-                android:layout_width="0dp"
+                android:layout_width="3dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#cc0605"
+                android:background="@drawable/cancel_button"
                 android:text="Cancel"
                 android:textAllCaps="false"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:layout_margin="15dp" />
 
             <Button
 
                 android:id="@+id/save"
-                android:layout_width="0dp"
+                android:layout_width="3dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#308446"
+                android:background="@drawable/rounded_button"
                 android:text="Save"
                 android:textAllCaps="false"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:layout_margin="15dp"
+                android:layout_marginLeft="25dp"/>
 
         </LinearLayout>
 

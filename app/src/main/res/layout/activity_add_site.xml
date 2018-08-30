@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp"
+        android:layout_marginTop="40dp"
         tools:context=".activity.Activity_Login">
 
         <TextView
@@ -26,9 +27,9 @@
             android:id="@+id/site"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/sell"
+            android:background="@drawable/rounded_editor"
             android:inputType="textCapSentences"
-            android:padding="16dp"
+            android:padding="10dp"
             android:textColor="@android:color/black" />
 
         <TextView
@@ -45,22 +46,25 @@
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/sell"
+            android:background="@drawable/rounded_editor"
             android:inputType="textCapSentences"
-            android:padding="16dp"
+            android:padding="10dp"
             android:textColor="@android:color/black" />
 
 
-        <Button
+            <Button
 
-            android:id="@+id/checkin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_30sdp"
-            android:background="#308446"
-            android:text="Check in"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white" />
+                android:id="@+id/checkin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_30sdp"
+                android:background="@drawable/rounded_button"
+                android:text="Check in"
+
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+
+                />
 
     </LinearLayout>
 </ScrollView>

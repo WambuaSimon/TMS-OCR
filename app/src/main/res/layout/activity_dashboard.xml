@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fcfcfc"
+
+    android:background="@android:color/darker_gray"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp">
@@ -34,9 +35,9 @@
             <ImageView
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:background="@color/colorPrimary"
+                android:background="@drawable/imageview_background"
                 android:padding="10dp"
-                android:src="@drawable/staff" />
+                android:src="@drawable/attendance" />
             <!--  <TextView
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -81,9 +82,10 @@
                 <ImageView
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    android:background="@color/colorPrimary"
+                    android:background="@drawable/imageview_background"
                     android:padding="10dp"
-                    android:src="@drawable/attendance" />
+                    android:src="@drawable/staff"
+                    />
                 <!-- <TextView
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
