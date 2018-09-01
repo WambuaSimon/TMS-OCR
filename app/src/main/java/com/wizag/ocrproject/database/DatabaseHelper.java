@@ -178,7 +178,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 worker.setSite(cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_SITE)));
                 worker.setWage(cursor.getString(cursor.getColumnIndex(Worker.COLUMN_WAGE)));
                 worker.setImage(cursor.getBlob(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));
-                worker.setFlag(cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_IMAGE)));
+                worker.setFlag(cursor.getInt(cursor.getColumnIndex(Worker.COLUMN_FLAG)));
 
                 workers.add(worker);
 

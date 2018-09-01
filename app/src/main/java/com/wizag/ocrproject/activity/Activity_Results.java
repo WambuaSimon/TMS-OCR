@@ -156,12 +156,22 @@ public class Activity_Results extends AppCompatActivity {
 //        Toast.makeText(getApplicationContext(), "" + site_id, Toast.LENGTH_SHORT).show();
 //        Worker existing_worker_new_image = db.getOnlyWorker(Long.parseLong(scanned_id_no));
 
-//        image_from_db = existing_worker_new_image.getImage();
+        if (db.rowIdExists(scanned_id_no)) {
+            Worker existing_worker_new = db.getOnlyWorker(Long.parseLong(scanned_id_no));
+            image_from_db = existing_worker_new.getImage();
+            wage = existing_worker_new.getWage();
 
-        /*ByteArrayInputStream inputStream = new ByteArrayInputStream(image_from_db);
-        Bitmap bitmap_image = BitmapFactory.decodeStream(inputStream);
-        id_image.setImageBitmap(bitmap_image);
-*/
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(image_from_db);
+            Bitmap bitmap_image = BitmapFactory.decodeStream(inputStream);
+            id_image.setImageBitmap(bitmap_image);
+
+
+            Toast.makeText(getApplicationContext(), ""+wage, Toast.LENGTH_SHORT).show();
+
+        }
+
+
+
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,9 +205,7 @@ public class Activity_Results extends AppCompatActivity {
                 } else if (db.rowIdExists(scanned_id_no)) {
 
 
-
                     Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
-                    Worker existing_worker_new = db.getOnlyWorker(Long.parseLong(scanned_id_no));
 
                     existing_date_txt = existing_worker.getDate();
                     flag = existing_worker.getFlag();
@@ -206,9 +214,8 @@ public class Activity_Results extends AppCompatActivity {
 //
                     String fname = existing_worker.getF_name();
                     String lname = existing_worker.getL_name();
-                    wage = existing_worker_new.getWage();
-//                    Toast.makeText(getApplicationContext(), ""+wage, Toast.LENGTH_SHORT).show();
 
+//                    Toast.makeText(getApplicationContext(), ""+wage, Toast.LENGTH_SHORT).show();
 
 
                     if (flag == 1) {
@@ -382,7 +389,7 @@ public class Activity_Results extends AppCompatActivity {
 
                             Toast.makeText(getApplicationContext(), "Employee Found and added to local database", Toast.LENGTH_SHORT).show();
                             /*save them to local db*/
-                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site_id,id_photo, flag_checkin);
+                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site_id, id_photo, flag_checkin);
 
                             checkinUser();
                             /*send their details to server*/
@@ -465,7 +472,7 @@ public class Activity_Results extends AppCompatActivity {
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
 //                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
-                            finish();
+//                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
