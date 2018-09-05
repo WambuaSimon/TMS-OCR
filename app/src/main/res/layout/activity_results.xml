@@ -145,7 +145,6 @@
                 android:layout_height="@dimen/_200sdp"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:src="@drawable/person"
                 android:background="@android:color/darker_gray"
                 android:padding="@dimen/_16sdp"/>
 

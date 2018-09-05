@@ -3,7 +3,7 @@
     package="com.wizag.ocrproject">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature android:name="android.hardware.camera" />
 
@@ -46,12 +46,9 @@
         <activity
             android:name=".activity.Activity_New_User_Results"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".activity.Activity_Add_Site"
-            android:windowSoftInputMode="stateHidden">
-
-        </activity>
+            android:windowSoftInputMode="stateHidden"></activity>
 
         <receiver
             android:name=".services.GeofenceBroadcastReceiver"
@@ -62,6 +59,10 @@
             android:name=".services.GeofenceTransitionsJobIntentService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <activity android:name=".activity.PaymentTest">
+
+        </activity>
     </application>
 
 </manifest>

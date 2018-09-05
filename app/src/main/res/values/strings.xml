@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" >MobileTA</string>
+    <string name="app_name">MobileTA</string>
 
 
     <string name="error_msg_no_internet">Not connected to internet</string>

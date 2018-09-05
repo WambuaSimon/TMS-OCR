@@ -161,12 +161,14 @@ public class Activity_Results extends AppCompatActivity {
             image_from_db = existing_worker_new.getImage();
             wage = existing_worker_new.getWage();
 
+
+
             ByteArrayInputStream inputStream = new ByteArrayInputStream(image_from_db);
             Bitmap bitmap_image = BitmapFactory.decodeStream(inputStream);
             id_image.setImageBitmap(bitmap_image);
 
 
-            Toast.makeText(getApplicationContext(), ""+wage, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), ""+wage, Toast.LENGTH_SHORT).show();
 
         }
 
@@ -181,12 +183,8 @@ public class Activity_Results extends AppCompatActivity {
 
 
 
-                /*convert image bitmap to byte[]*/
-                /*bitmap = ((BitmapDrawable) id_image.getDrawable()).getBitmap();
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
-                id_photo = outputStream.toByteArray();
-*/
+
+
                 bitmap = ((BitmapDrawable) id_image.getDrawable()).getBitmap();
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
@@ -223,7 +221,6 @@ public class Activity_Results extends AppCompatActivity {
                         builder.setTitle("Confirm Action").setMessage("Would you like to check out\n\n" + scanned_name + "?").setCancelable(false)
                                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-
                                         createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site_id, id_photo, flag_checkout);
                                         checkoutUser();
 
@@ -472,7 +469,7 @@ public class Activity_Results extends AppCompatActivity {
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
 //                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
-//                            finish();
+                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -569,7 +566,7 @@ public class Activity_Results extends AppCompatActivity {
                 params.put("id_no", scanned_id_no);
                 params.put("time_out", time);
                 params.put("date_out", date);
-                params.put("site_id", "1");
+                params.put("site_id", String.valueOf(site_id));
 
                 //params.put("code", "blst786");
                 //  params.put("")

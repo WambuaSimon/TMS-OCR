@@ -35,6 +35,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -88,6 +89,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
     int flag_checkin = 1;
     int flag_checkout = 0;
     SharedPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,8 +169,10 @@ public class Activity_New_User_Results extends AppCompatActivity {
                 } else if (id_image.getDrawable() == null) {
                     Toast.makeText(Activity_New_User_Results.this, "Capture Image of User to continue", Toast.LENGTH_LONG).show();
 
-                } else {
-                    registerUser();
+                }
+
+                else{
+                   searchWorker();
 
 
 //                    Toast.makeText(Activity_New_User_Results.this, "User Created", Toast.LENGTH_SHORT).show();
@@ -178,6 +182,86 @@ public class Activity_New_User_Results extends AppCompatActivity {
         });
 
     }
+
+
+    private void searchWorker() {
+        isNetworkConnectionAvailable();
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://timetrax.wizag.biz/api/v1/check_employee/" + scanned_id_no, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    JSONObject jsonObject = new JSONObject(response);
+                    pDialog.dismiss();
+                    if (jsonObject != null) {
+                        JSONObject data = jsonObject.getJSONObject("data");
+
+                        String exists = data.getString("exists");
+                        if (exists.equalsIgnoreCase("true")) {
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Activity_New_User_Results.this);
+                            builder.setTitle("Info").setMessage("Employee:\t" + scanned_name + "\t already exists in the system, Scan Id to check in/out").setCancelable(false)
+                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            startActivity(new Intent(getApplicationContext(), Activity_Scan.class));
+                                            finish();
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // User cancelled the dialog
+                                        }
+                                    });
+
+                            builder.show();
+
+
+                        } else if (exists.equalsIgnoreCase("false")) {
+
+                            registerUser();
+
+
+//                            Toast.makeText(getApplicationContext(), "User Does not exist in the system", Toast.LENGTH_LONG).show();
+
+                        }
+
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_LONG).show();
+                pDialog.hide();
+            }
+
+
+        });
+
+
+        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+
+        int socketTimeout = 30000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        requestQueue.add(stringRequest);
+
+
+    }
+
 
 //    private void createWorker(String id_no, String name, String location, String time, String date, String wage, String dob, byte[] id_photo,int flag) {
 //
@@ -269,10 +353,10 @@ public class Activity_New_User_Results extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, int site,String wage, byte[] image, int flag)
+    private void createEmployee(int id_no, String f_name, String l_name, String location, String time, String date, int site, String wage, byte[] image, int flag)
 
     {
-        long id = db.insertWorker(new Worker(id_no, flag, f_name, l_name, location, time, date, site,wage, image));
+        long id = db.insertWorker(new Worker(id_no, flag, f_name, l_name, location, time, date, site, wage, image));
     }
 
     private void registerUser() {
@@ -326,7 +410,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
                 params.put("f_name", f_name);
                 params.put("l_name", l_name);
                 params.put("id_no", scanned_id_no);
-                params.put("image", "edjenesc");
+                params.put("image", String.valueOf(id_photo));
                 params.put("wage", wage_txt);
                 params.put("location", current_location);
                 //params.put("code", "blst786");
@@ -365,11 +449,10 @@ public class Activity_New_User_Results extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_SHORT).show();
 //                            createEmployee(scanned_id_to_int, scanned_name, current_location, time, date, wage_txt, dob_txt, id_photo,flag_checkin);
 
-                            createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site_id,wage_txt, id_photo, flag_checkin);
+                            createEmployee(scanned_id_to_int, f_name, l_name, current_location, time, date, site_id, wage_txt, id_photo, flag_checkin);
 
                             startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
                             finish();
-
 
 
 //                            finish();
