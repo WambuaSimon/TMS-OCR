@@ -64,7 +64,7 @@ import java.util.Map;
 public class Activity_New_User_Results extends AppCompatActivity {
 
     Button cancel, save;
-
+    JSONArray companies;
     TextView name, id_no, dob, reg_time, reg_date;
     ImageView id_image;
     Spinner site;
@@ -89,6 +89,9 @@ public class Activity_New_User_Results extends AppCompatActivity {
     int flag_checkin = 1;
     int flag_checkout = 0;
     SharedPreferences prefs;
+    Spinner spinner_site;
+    ArrayList<String> Site;
+    int id_company;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +103,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
 
         isNetworkConnectionAvailable();
 
-
+        Site = new ArrayList<>();
         prefs = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         site_id = prefs.getInt("site_id", 0);
 
@@ -135,6 +138,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
         reg_time = findViewById(R.id.reg_time);
         reg_date = findViewById(R.id.reg_date);
 
+        spinner_site = findViewById(R.id.spinner_site);
 
 //        site = findViewById(R.id.site);
         wage = findViewById(R.id.wage);
@@ -169,10 +173,8 @@ public class Activity_New_User_Results extends AppCompatActivity {
                 } else if (id_image.getDrawable() == null) {
                     Toast.makeText(Activity_New_User_Results.this, "Capture Image of User to continue", Toast.LENGTH_LONG).show();
 
-                }
-
-                else{
-                   searchWorker();
+                } else {
+                    searchWorker();
 
 
 //                    Toast.makeText(Activity_New_User_Results.this, "User Created", Toast.LENGTH_SHORT).show();
@@ -181,6 +183,27 @@ public class Activity_New_User_Results extends AppCompatActivity {
             }
         });
 
+        spinner_site.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String value = spinner_site.getSelectedItem().toString();
+
+                try {
+                    JSONObject dataClicked = companies.getJSONObject(i);
+                    id_company = dataClicked.getInt("id");
+//                    getMaterialUnits();
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        LoadSite();
     }
 
 
@@ -398,7 +421,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Toast.makeText(Activity_New_User_Results.this, "User not saved in remote server", Toast.LENGTH_LONG).show();
+                Toast.makeText(Activity_New_User_Results.this, "User not saved in remote server" + error.getMessage(), Toast.LENGTH_LONG).show();
 
                 pDialog.dismiss();
             }
@@ -413,6 +436,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
                 params.put("image", String.valueOf(id_photo));
                 params.put("wage", wage_txt);
                 params.put("location", current_location);
+                params.put("company_id", String.valueOf(id_company));
                 //params.put("code", "blst786");
                 //  params.put("")
                 return params;
@@ -490,6 +514,84 @@ public class Activity_New_User_Results extends AppCompatActivity {
         };
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
+    }
+
+    private void LoadSite() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://timetrax.wizag.biz/api/v1/companies", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    JSONObject jsonObject = new JSONObject(response);
+                    pDialog.dismiss();
+                    if (jsonObject != null) {
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        companies = data.getJSONArray("companies");
+
+                        for (int p = 0; p < companies.length(); p++) {
+                            JSONObject materials_object = companies.getJSONObject(p);
+
+                            String type_id = materials_object.getString("id");
+                            String name = materials_object.getString("name");
+
+
+                            if (companies != null) {
+
+                                if (Site.contains(name)) {
+
+
+                                } else {
+
+                                    //Toast.makeText(getApplicationContext(), "data\n" + size.getJSONObject(m).getString("size"), Toast.LENGTH_SHORT).show();
+                                    Site.add(name);
+//                                    Site.add(companies.getJSONObject(p).getString("id"));
+
+                                }
+
+                            }
+
+                        }
+
+
+                    }
+                    spinner_site.setAdapter(new ArrayAdapter<String>(Activity_New_User_Results.this, android.R.layout.simple_spinner_dropdown_item, Site));
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                pDialog.dismiss();
+                Toast.makeText(getApplicationContext(), "An Error Occurred" + error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+
+
+        }) {
+
+
+        };
+
+
+        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+
+        int socketTimeout = 30000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        requestQueue.add(stringRequest);
+
+
     }
 
 }

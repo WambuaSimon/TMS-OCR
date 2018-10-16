@@ -29,5 +29,10 @@
         Click notification to return to app
     </string>
 
+    <string name="site_prompt">Choose Site</string>
+    <string-array name="site_arrays">
+        <item>--Select Site--</item>
+
+    </string-array>
 
 </resources>

@@ -105,6 +105,10 @@ public class Activity_Results extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
 
+
+        isNetworkConnectionAvailable();
+
+
         db = new DatabaseHelper(this);
         Calendar cal = Calendar.getInstance();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
@@ -157,21 +161,21 @@ public class Activity_Results extends AppCompatActivity {
 //        Worker existing_worker_new_image = db.getOnlyWorker(Long.parseLong(scanned_id_no));
 
         if (db.rowIdExists(scanned_id_no)) {
+
             Worker existing_worker_new = db.getOnlyWorker(Long.parseLong(scanned_id_no));
+
             image_from_db = existing_worker_new.getImage();
             wage = existing_worker_new.getWage();
 
-
-
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(image_from_db);
-            Bitmap bitmap_image = BitmapFactory.decodeStream(inputStream);
-            id_image.setImageBitmap(bitmap_image);
-
+            if (image_from_db != null) {
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(image_from_db);
+                Bitmap bitmap_image = BitmapFactory.decodeStream(inputStream);
+                id_image.setImageBitmap(bitmap_image);
+            }
 
 //            Toast.makeText(getApplicationContext(), ""+wage, Toast.LENGTH_SHORT).show();
 
         }
-
 
 
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -180,19 +184,10 @@ public class Activity_Results extends AppCompatActivity {
 
                 scanned_id_to_int = Integer.parseInt(scanned_id_no);
 
-
-
-
-
-
-                bitmap = ((BitmapDrawable) id_image.getDrawable()).getBitmap();
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                id_photo = byteArrayOutputStream.toByteArray();
-
-                encoded_image = Base64.encodeToString(id_photo, Base64.DEFAULT);
-
-                if (!db.rowIdExists(scanned_id_no)) {
+                if (id_image.getDrawable() == null) {
+                    Toast.makeText(getApplicationContext(), "Capture Employee image to continue", Toast.LENGTH_SHORT).show();
+                }
+                else if (!db.rowIdExists(scanned_id_no)) {
 
                     searchWorker();
 //                    checkinUser();
@@ -201,10 +196,19 @@ public class Activity_Results extends AppCompatActivity {
 
 
                 } else if (db.rowIdExists(scanned_id_no)) {
+                    if (id_image.getDrawable() == null) {
+                        Toast.makeText(getApplicationContext(), "Capture Employee image to continue", Toast.LENGTH_SHORT).show();
+                    } else {
+                        bitmap = ((BitmapDrawable) id_image.getDrawable()).getBitmap();
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                        id_photo = byteArrayOutputStream.toByteArray();
+                        encoded_image = Base64.encodeToString(id_photo, Base64.DEFAULT);
+
+                    }
 
 
                     Worker existing_worker = db.getWorker(Long.parseLong(scanned_id_no));
-
                     existing_date_txt = existing_worker.getDate();
                     flag = existing_worker.getFlag();
 
@@ -469,8 +473,9 @@ public class Activity_Results extends AppCompatActivity {
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
 //                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
-                            finish();
 
+                            startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
+//                            finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -542,8 +547,8 @@ public class Activity_Results extends AppCompatActivity {
                             // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
                             //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
-                            finish();
-
+//                            finish();
+                            startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

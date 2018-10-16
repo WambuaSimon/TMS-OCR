@@ -61,6 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
+
             android:orientation="vertical">
 
             <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -70,11 +71,11 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:background="@android:color/darker_gray"
-                android:padding="@dimen/_16sdp"
-                />
+                android:padding="@dimen/_16sdp" />
 
 
             <ImageView
+
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_gravity="end"
@@ -84,9 +85,32 @@
         </LinearLayout>
 
 
+        <TextView
+            android:id="@+id/spinnerText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bariol_regular"
+            android:text="Site Name"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_18sdp" />
+
+
+        <Spinner
+            android:id="@+id/spinner_site"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:background="@drawable/sell"
+            android:entries="@array/site_arrays"
+            android:fontFamily="@font/bariol_bold"
+
+            android:prompt="@string/site_prompt"
+            android:textColor="#000000"
+            android:textSize="20sp" />
 
         <TextView
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -101,57 +125,57 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:background="@drawable/rounded_editor"
-            android:padding="10dp"
             android:inputType="number"
+            android:padding="10dp"
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
 
 
-      <!--  <LinearLayout
-            android:id="@+id/linear_size"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:background="@drawable/sell"
-            android:padding="@dimen/_8sdp">
+        <!--  <LinearLayout
+              android:id="@+id/linear_size"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/_15sdp"
+              android:background="@drawable/sell"
+              android:padding="@dimen/_8sdp">
 
-            <TextView
+              <TextView
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/bariol_regular"
-                android:text="Site"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginBottom="10dp"
+                  android:layout_marginLeft="10dp"
+                  android:layout_marginTop="10dp"
+                  android:layout_weight="1"
+                  android:fontFamily="@font/bariol_regular"
+                  android:text="Site"
 
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/_20sdp" />
+                  android:textColor="@android:color/black"
+                  android:textSize="@dimen/_20sdp" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="#B8BECC" />
+              <View
+                  android:layout_width="1dp"
+                  android:layout_height="match_parent"
+                  android:background="#B8BECC" />
 
-            <Spinner
-                android:id="@+id/site"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="@dimen/_16sdp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="2"
-                android:entries="@array/site_arrays"
-                android:fontFamily="@font/bariol_bold"
-                android:prompt="@string/site_prompt"
-                android:textColor="@android:color/black">
+              <Spinner
+                  android:id="@+id/site"
+                  android:layout_width="wrap_content"
+                  android:layout_height="match_parent"
+                  android:layout_marginBottom="10dp"
+                  android:layout_marginLeft="10dp"
+                  android:layout_marginRight="@dimen/_16sdp"
+                  android:layout_marginTop="10dp"
+                  android:layout_weight="2"
+                  android:entries="@array/site_arrays"
+                  android:fontFamily="@font/bariol_bold"
+                  android:prompt="@string/site_prompt"
+                  android:textColor="@android:color/black">
 
-            </Spinner>
+              </Spinner>
 
-        </LinearLayout>-->
+          </LinearLayout>-->
 
         <TextView
 
@@ -168,35 +192,34 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
 
-            android:weightSum="1"
             android:background="@drawable/rounded_button"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:padding="10dp"
+            android:weightSum="1">
 
             <TextView
-                android:textStyle="bold"
                 android:id="@+id/reg_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="0.5"
                 android:text="Time"
-
                 android:textColor="@android:color/white"
-                android:textSize="18sp" />
+
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <TextView
-                android:textStyle="bold"
                 android:id="@+id/reg_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:text="Date"
+                android:textColor="@android:color/white"
                 android:textSize="18sp"
-                android:textColor="@android:color/white" />
+                android:textStyle="bold" />
 
         </LinearLayout>
-
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -209,25 +232,25 @@
                 android:id="@+id/cancel"
                 android:layout_width="3dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="15dp"
                 android:layout_weight="1"
                 android:background="@drawable/cancel_button"
                 android:text="Cancel"
                 android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:layout_margin="15dp" />
+                android:textColor="@android:color/white" />
 
             <Button
 
                 android:id="@+id/save"
                 android:layout_width="3dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:layout_marginLeft="25dp"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button"
                 android:text="Save"
                 android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:layout_margin="15dp"
-                android:layout_marginLeft="25dp"/>
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
 

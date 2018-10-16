@@ -2,8 +2,10 @@ package com.wizag.ocrproject.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -44,9 +46,30 @@ public class Activity_Add_Site extends AppCompatActivity {
         if (gps.canGetLocation()) {
             double latitude = gps.getLatitude();
             double longitude = gps.getLongitude();
-            latitude_txt = String.valueOf(latitude);
-            longitude_txt = String.valueOf(longitude);
-            String location = latitude + "," + longitude;
+
+            if (latitude == 0.0 && longitude == 0.0) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Please turn on Location services to continue");
+                builder.setCancelable(false);
+                builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+//                Toast.makeText(getApplicationContext(), "Ensure GPS is turned on!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                latitude_txt = String.valueOf(latitude);
+                longitude_txt = String.valueOf(longitude);
+                String location = latitude + "," + longitude;
+            }
+
+
+
 //            Toast.makeText(getApplicationContext(), "" + location, Toast.LENGTH_SHORT).show();
 
         } else {
