@@ -65,6 +65,7 @@ public class Activity_Results extends AppCompatActivity {
     TextView time_in, date_in;
     TextView id_no;
     Button confirm, discard;
+    private boolean calledme = false;
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     ImageView id_image;
@@ -75,7 +76,8 @@ public class Activity_Results extends AppCompatActivity {
     protected Context context;
     DatabaseHelper db;
     Bitmap photo, bitmap;
-    byte[] id_photo, image_from_db;
+    byte[] id_photo, image_from_db, image_from_server;
+    String image_from_server_str;
     String scanned_id_no;
     String date_str, date, time;
     private static final String SHARED_PREF_SITE = "site_name";
@@ -99,6 +101,7 @@ public class Activity_Results extends AppCompatActivity {
     String encoded_image;
     int site_id;
     String wage;
+    JSONObject employee;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,9 +149,67 @@ public class Activity_Results extends AppCompatActivity {
         time_in.setText(time);
         date_in.setText(date);
 
+        /*fetch image and set it to image view*/
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://timetrax.wizag.biz/api/v1/check_employee/" + scanned_id_no, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (jsonObject != null) {
+                        JSONObject data = jsonObject.getJSONObject("data");
+
+                        String exists = data.getString("exists");
+                        if (exists.equalsIgnoreCase("true")) {
+
+                            employee = data.getJSONObject("employee");
+                            image_from_server_str = employee.getString("image");
+
+                            image_from_server = image_from_server_str.getBytes();
+
+                            if (!image_from_server_str.isEmpty()) {
+                                Bitmap bitmap = BitmapFactory.decodeByteArray(image_from_server, 0, image_from_server.length);
+                                id_image.setImageBitmap(bitmap);
+                            }
+
+
+                        }
+                    }
+
+
+                } catch (
+                        JSONException e)
+
+                {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener()
+
+        {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(getApplicationContext(), "An Error Occurred while loading image, please check your connectivity and try again", Toast.LENGTH_LONG).show();
+
+            }
+
+
+        });
+
+
+        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+
+
+
+
+
         discard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
                 finish();
             }
         });
@@ -156,9 +217,6 @@ public class Activity_Results extends AppCompatActivity {
         prefs = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         site_id = prefs.getInt("site_id", 0);
 
-
-//        Toast.makeText(getApplicationContext(), "" + site_id, Toast.LENGTH_SHORT).show();
-//        Worker existing_worker_new_image = db.getOnlyWorker(Long.parseLong(scanned_id_no));
 
         if (db.rowIdExists(scanned_id_no)) {
 
@@ -186,8 +244,7 @@ public class Activity_Results extends AppCompatActivity {
 
                 if (id_image.getDrawable() == null) {
                     Toast.makeText(getApplicationContext(), "Capture Employee image to continue", Toast.LENGTH_SHORT).show();
-                }
-                else if (!db.rowIdExists(scanned_id_no)) {
+                } else if (!db.rowIdExists(scanned_id_no)) {
 
                     searchWorker();
 //                    checkinUser();
@@ -341,11 +398,6 @@ public class Activity_Results extends AppCompatActivity {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 
-
-   /* public static byte[] getBitmapAsByteArray(Bitmap bitmap) {
-          return outputStream.toByteArray();
-    }*/
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             photo = (Bitmap) data.getExtras().get("data");
@@ -382,11 +434,13 @@ public class Activity_Results extends AppCompatActivity {
                         String exists = data.getString("exists");
                         if (exists.equalsIgnoreCase("true")) {
 
-                            JSONObject employee = data.getJSONObject("employee");
+                            employee = data.getJSONObject("employee");
 
                             f_name_remote = employee.getString("first_name");
                             l_name_remote = employee.getString("last_name");
                             id_no_remote = employee.getInt("id_number");
+                            image_from_server_str = employee.getString("image");
+
 
                             Toast.makeText(getApplicationContext(), "Employee Found and added to local database", Toast.LENGTH_SHORT).show();
                             /*save them to local db*/
@@ -431,7 +485,7 @@ public class Activity_Results extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "An Error Occurred, please check your connectivity and try again", Toast.LENGTH_LONG).show();
                 pDialog.hide();
             }
 
@@ -451,7 +505,9 @@ public class Activity_Results extends AppCompatActivity {
     }
 
     public void checkinUser() {
-
+        if (calledme)
+            return;
+        calledme = true;
         com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_Results.this);
         final ProgressDialog pDialog = new ProgressDialog(Activity_Results.this);
         pDialog.setMessage("Loading...");
@@ -469,13 +525,10 @@ public class Activity_Results extends AppCompatActivity {
                             pDialog.dismiss();
                             JSONObject data = jsonObject.getJSONObject("data");
                             String success_message = data.getString("message");
-                            // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
-                            //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
-//                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkin);
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
 
                             startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
-//                            finish();
+                            finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -486,7 +539,7 @@ public class Activity_Results extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 pDialog.dismiss();
-                Toast.makeText(Activity_Results.this, "An Error Occurred", Toast.LENGTH_LONG).show();
+                Toast.makeText(Activity_Results.this, "An Error Occurred, please check your connectivity and try again", Toast.LENGTH_LONG).show();
 //                finish();
 
             }
@@ -511,17 +564,6 @@ public class Activity_Results extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-   /* @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        pDialog.dismiss();
-    }*/
-
-    /*@Override
-    protected void onPause() {
-        super.onPause();
-        pDialog.dismiss();
-    }*/
 
     public void checkoutUser() {
 
@@ -542,13 +584,9 @@ public class Activity_Results extends AppCompatActivity {
                             pDialog.dismiss();
                             JSONObject data = jsonObject.getJSONObject("data");
                             String success_message = data.getString("message");
-//                            createEmployee(id_no_remote, f_name_remote, l_name_remote, current_location, time, date, site, id_photo, flag_checkout);
-//
-                            // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
-                            //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_LONG).show();
-//                            finish();
                             startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
+                            finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -559,7 +597,7 @@ public class Activity_Results extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 pDialog.dismiss();
-                Toast.makeText(Activity_Results.this, "An Error Occurred", Toast.LENGTH_LONG).show();
+                Toast.makeText(Activity_Results.this, "An Error Occurred, please check your connectivity and try again", Toast.LENGTH_LONG).show();
 //                finish();
 
             }

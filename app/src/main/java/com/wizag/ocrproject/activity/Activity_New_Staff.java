@@ -149,10 +149,10 @@ public class Activity_New_Staff extends AppCompatActivity {
         String scannedPrimaryId = mrzResult.getPrimaryId();
         String scannedSecondaryId = mrzResult.getSecondaryId();
         DateResult scannedDob = mrzResult.getDateOfBirth();
-        Toast.makeText(getApplicationContext(), ""+scannedSecondaryId, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), ""+scannedSecondaryId, Toast.LENGTH_SHORT).show();
 
 
-        String scanned_id = mrzResult.getOpt2().replaceAll("[^0-9]", "");
+        String scanned_id = mrzResult.getOpt2().replaceAll("[^\\d]", "");
 
         Intent result = new Intent(getApplicationContext(), Activity_New_User_Results.class);
         result.putExtra("Name", scannedPrimaryId + scannedSecondaryId);
@@ -161,7 +161,7 @@ public class Activity_New_Staff extends AppCompatActivity {
         result.putExtra("Location", location);
 //        Toast.makeText(this, "Scanned primary id: " + scanned_id, Toast.LENGTH_LONG).show();
         startActivity(result);
-        finish();
+//        finish();
 
     }
 

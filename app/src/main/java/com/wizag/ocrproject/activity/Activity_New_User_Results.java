@@ -62,7 +62,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Activity_New_User_Results extends AppCompatActivity {
-
+    private boolean calledme = false;
+    private boolean regCall = false;
     Button cancel, save;
     JSONArray companies;
     TextView name, id_no, dob, reg_time, reg_date;
@@ -81,7 +82,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
     ArrayList<String> worker;
     ArrayList<String> SiteName;
     //    String URL = "http://timetrax.wizag.biz/api/v1/sitesapi";
-    String POST_MATERIAL = "http://timetrax.wizag.biz/api/v1/register_employee";
+    String Register_Employee = "http://timetrax.wizag.biz/api/v1/register_employee";
     String names[], f_name, l_name;
     String worker_image;
     String checkIn_URL = "http://timetrax.wizag.biz/api/v1/checkin_employee";
@@ -266,7 +267,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "An Error Occurred, please check your connectivity and try again", Toast.LENGTH_LONG).show();
                 pDialog.hide();
             }
 
@@ -339,8 +340,10 @@ public class Activity_New_User_Results extends AppCompatActivity {
             id_photo = outputStream.toByteArray();
 
             /*convert image to base64*/
-
             worker_image = Base64.encodeToString(id_photo, Base64.DEFAULT);
+
+            /*convert byte */
+
 
         }
     }
@@ -383,6 +386,9 @@ public class Activity_New_User_Results extends AppCompatActivity {
     }
 
     private void registerUser() {
+        if (regCall)
+            return;
+        regCall = true;
 
         com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_New_User_Results.this);
         final ProgressDialog pDialog = new ProgressDialog(this);
@@ -391,7 +397,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
 //        pDialog.setIndeterminate(false);
         pDialog.show();
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, POST_MATERIAL,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Register_Employee,
                 new com.android.volley.Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -401,12 +407,6 @@ public class Activity_New_User_Results extends AppCompatActivity {
                             pDialog.dismiss();
                             JSONObject data = jsonObject.getJSONObject("data");
                             String success_message = data.getString("message");
-                            // Snackbar.make(sell_layout, "New Request Created Successfully" , Snackbar.LENGTH_LONG).show();
-                            //Snackbar.make(sell_layout, "New request created successfully", Snackbar.LENGTH_LONG).show();
-                            /*save user to local db and check in*/
-
-                            /*check in user*/
-
 
                             Toast.makeText(getApplicationContext(), success_message, Toast.LENGTH_SHORT).show();
                             checkinUser();
@@ -421,7 +421,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Toast.makeText(Activity_New_User_Results.this, "User not saved in remote server" + error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(Activity_New_User_Results.this, "Cannot save user to remote server, check your connection and try again", Toast.LENGTH_LONG).show();
 
                 pDialog.dismiss();
             }
@@ -450,6 +450,9 @@ public class Activity_New_User_Results extends AppCompatActivity {
 
 
     private void checkinUser() {
+        if (calledme)
+            return;
+        calledme = true;
 
         com.android.volley.RequestQueue queue = Volley.newRequestQueue(Activity_New_User_Results.this);
         final ProgressDialog pDialog = new ProgressDialog(this);
@@ -478,9 +481,6 @@ public class Activity_New_User_Results extends AppCompatActivity {
                             startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
                             finish();
 
-
-//                            finish();
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -491,7 +491,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Toast.makeText(Activity_New_User_Results.this, "An Error Occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Activity_New_User_Results.this, "An Error Occurred, please check your connectivity and try again", Toast.LENGTH_SHORT).show();
 
                 pDialog.dismiss();
             }
@@ -572,7 +572,7 @@ public class Activity_New_User_Results extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 pDialog.dismiss();
-                Toast.makeText(getApplicationContext(), "An Error Occurred" + error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "An Error Occurred, please check your connectivity and try again" + error.getMessage(), Toast.LENGTH_LONG).show();
 
             }
 

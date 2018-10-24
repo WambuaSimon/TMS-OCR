@@ -19,13 +19,13 @@ public class Activity_Dashboard extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
 
-        attendance = (CardView) findViewById(R.id.attendance);
-        add_staff = (CardView) findViewById(R.id.add_staff);
+        attendance =  findViewById(R.id.attendance);
+        add_staff =  findViewById(R.id.add_staff);
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), Activity_Scan.class));
-                finish();
+//                finish();
             }
         });
 
@@ -33,7 +33,7 @@ public class Activity_Dashboard extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), Activity_New_Staff.class));
-                finish();
+//                finish();
             }
         });
 
