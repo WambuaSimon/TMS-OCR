@@ -100,7 +100,7 @@ public class Activity_Scan extends AppCompatActivity {
         result.putExtra("Location", location);
 //        Toast.makeText(this, "Scanned primary id: " + scanned_id, Toast.LENGTH_LONG).show();
         startActivity(result);
-//        finish();
+        finish();
 
 
     }

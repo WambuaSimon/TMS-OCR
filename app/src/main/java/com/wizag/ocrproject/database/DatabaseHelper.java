@@ -1,13 +1,32 @@
 package com.wizag.ocrproject.database;
 
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.wizag.ocrproject.activity.Activity_New_Staff;
+import com.wizag.ocrproject.activity.Activity_Results;
+import com.wizag.ocrproject.network.MySingleton;
 import com.wizag.ocrproject.pojo.Worker;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -223,4 +242,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     db.close();*/
         return exists;
     }
+
+
 }

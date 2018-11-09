@@ -66,6 +66,9 @@ public class Activity_Results extends AppCompatActivity {
     TextView id_no;
     Button confirm, discard;
     private boolean calledme = false;
+    private boolean searchedMe = false;
+    private boolean searchLocal = false;
+    private boolean localDb = false;
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     ImageView id_image;
@@ -102,6 +105,8 @@ public class Activity_Results extends AppCompatActivity {
     int site_id;
     String wage;
     JSONObject employee;
+    boolean exists_in_server = false;
+    Bitmap bitmap_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +160,7 @@ public class Activity_Results extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
 
+
                     JSONObject jsonObject = new JSONObject(response);
 
                     if (jsonObject != null) {
@@ -164,15 +170,13 @@ public class Activity_Results extends AppCompatActivity {
                         if (exists.equalsIgnoreCase("true")) {
 
                             employee = data.getJSONObject("employee");
+                            f_name_remote = employee.getString("first_name");
+                            l_name_remote = employee.getString("last_name");
+                            id_no_remote = employee.getInt("id_number");
                             image_from_server_str = employee.getString("image");
-
                             image_from_server = image_from_server_str.getBytes();
-
-                            if (!image_from_server_str.isEmpty()) {
-                                Bitmap bitmap = BitmapFactory.decodeByteArray(image_from_server, 0, image_from_server.length);
-                                id_image.setImageBitmap(bitmap);
-                            }
-
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(image_from_server, 0, image_from_server.length);
+                            id_image.setImageBitmap(bitmap);
 
                         }
                     }
@@ -202,10 +206,6 @@ public class Activity_Results extends AppCompatActivity {
         MySingleton.getInstance(this).addToRequestQueue(stringRequest);
 
 
-
-
-
-
         discard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -227,7 +227,7 @@ public class Activity_Results extends AppCompatActivity {
 
             if (image_from_db != null) {
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(image_from_db);
-                Bitmap bitmap_image = BitmapFactory.decodeStream(inputStream);
+                bitmap_image = BitmapFactory.decodeStream(inputStream);
                 id_image.setImageBitmap(bitmap_image);
             }
 
@@ -242,18 +242,39 @@ public class Activity_Results extends AppCompatActivity {
 
                 scanned_id_to_int = Integer.parseInt(scanned_id_no);
 
-                if (id_image.getDrawable() == null) {
+
+                /*if user exists in local db but doesnt exist in remote db*/
+                if (db.rowIdExists(scanned_id_no) && searchLocalWorker()) {
+//                    searchLocalWorker();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Activity_Results.this);
+                    builder.setTitle("Add Employee").setMessage("Employee:\t" + scanned_name + "\t exists in local database but does not exist in remote server, please add them").setCancelable(false)
+                            .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    /*send details to server*/
+                                    startActivity((new Intent(getApplicationContext(), Activity_New_Staff.class)));
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                }
+                            });
+
+                    builder.show();
+
+
+                } else if (id_image.getDrawable() == null) {
                     Toast.makeText(getApplicationContext(), "Capture Employee image to continue", Toast.LENGTH_SHORT).show();
-                } else if (!db.rowIdExists(scanned_id_no)) {
+                }
 
-                    searchWorker();
-//                    checkinUser();
-                   /* startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
-                    finish();*/
+                else if (!db.rowIdExists(scanned_id_no)) {
 
+
+                        searchWorker();
 
                 } else if (db.rowIdExists(scanned_id_no)) {
-                    if (id_image.getDrawable() == null) {
+                    if (bitmap_image == null) {
                         Toast.makeText(getApplicationContext(), "Capture Employee image to continue", Toast.LENGTH_SHORT).show();
                     } else {
                         bitmap = ((BitmapDrawable) id_image.getDrawable()).getBitmap();
@@ -414,6 +435,10 @@ public class Activity_Results extends AppCompatActivity {
 
 
     private void searchWorker() {
+        if (searchedMe)
+            return;
+        searchedMe = true;
+
         isNetworkConnectionAvailable();
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         final ProgressDialog pDialog = new ProgressDialog(this);
@@ -622,5 +647,65 @@ public class Activity_Results extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    private boolean searchLocalWorker() {
+
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://timetrax.wizag.biz/api/v1/check_employee/" + scanned_id_no, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    JSONObject jsonObject = new JSONObject(response);
+                    pDialog.dismiss();
+                    if (jsonObject != null) {
+                        JSONObject data = jsonObject.getJSONObject("data");
+
+                        String exists = data.getString("exists");
+                        if (exists.equalsIgnoreCase("false")) {
+                            exists_in_server = true;
+
+
+//                            Toast.makeText(getApplicationContext(), "User Does not exist in the system", Toast.LENGTH_LONG).show();
+
+                        }
+
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(getApplicationContext(), "An Error Occurred, please check your connectivity and try again", Toast.LENGTH_LONG).show();
+                pDialog.hide();
+            }
+
+
+        });
+
+
+        MySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+
+        int socketTimeout = 30000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        requestQueue.add(stringRequest);
+        return exists_in_server;
+
+    }
 
 }
+
+

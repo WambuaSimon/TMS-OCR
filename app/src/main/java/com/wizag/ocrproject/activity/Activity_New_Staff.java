@@ -161,7 +161,7 @@ public class Activity_New_Staff extends AppCompatActivity {
         result.putExtra("Location", location);
 //        Toast.makeText(this, "Scanned primary id: " + scanned_id, Toast.LENGTH_LONG).show();
         startActivity(result);
-//        finish();
+        finish();
 
     }
 
@@ -202,6 +202,7 @@ public class Activity_New_Staff extends AppCompatActivity {
                 login_password = password_txt.getText().toString();
                 if (validateUserName(login_username) && validatePassword(login_password)) {
                     loginUser();
+                    finish();
 //                    Toast.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
 
                 }

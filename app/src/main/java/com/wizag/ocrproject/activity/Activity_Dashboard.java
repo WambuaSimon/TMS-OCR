@@ -25,7 +25,7 @@ public class Activity_Dashboard extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), Activity_Scan.class));
-//                finish();
+                finish();
             }
         });
 
@@ -33,7 +33,7 @@ public class Activity_Dashboard extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), Activity_New_Staff.class));
-//                finish();
+                finish();
             }
         });
 
