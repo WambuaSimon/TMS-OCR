@@ -10,11 +10,9 @@ import com.wizag.ocrproject.activity.Activity_Login;
 import java.util.HashMap;
 
 
-
 public class SessionManager {
     // Shared Preferences
     SharedPreferences prefs;
-
 
 
     // Editor for Shared prefserences
@@ -34,6 +32,7 @@ public class SessionManager {
 
     // User name (make variable public to access from outside)
     public static final String KEY_NAME = "username";
+    public static final String KEY_SITE_ID = "site_id";
 
     // Email address (make variable public to access from outside)
     public static final String KEY_PASSWORD = "password";
@@ -41,7 +40,7 @@ public class SessionManager {
     public static final String TOKEN = "access_token";
 
     // Constructor
-    public SessionManager(Context context){
+    public SessionManager(Context context) {
         this._context = context;
         prefs = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = prefs.edit();
@@ -49,8 +48,8 @@ public class SessionManager {
 
     /**
      * Create login session
-     * */
-    public void createLoginSession(String name, String password, String token){
+     */
+    public void createLoginSession(String name, String password, String token, String site_id) {
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
 
@@ -59,6 +58,7 @@ public class SessionManager {
 
         // Storing email in prefs
         editor.putString(KEY_PASSWORD, password);
+        editor.putString(KEY_SITE_ID, site_id);
 
         //storing access token
         editor.putString(TOKEN, token);
@@ -71,10 +71,10 @@ public class SessionManager {
      * Check login method wil check user login status
      * If false it will redirect user to login page
      * Else won't do anything
-     * */
-    public void checkLogin(){
+     */
+    public void checkLogin() {
         // Check login status
-        if(!this.isLoggedIn()){
+        if (!this.isLoggedIn()) {
             // user is not logged in redirect him to Login Activity
             Intent i = new Intent(_context, Activity_Login.class);
             // Closing all the Activities
@@ -90,11 +90,10 @@ public class SessionManager {
     }
 
 
-
     /**
      * Get stored session data
-     * */
-    public HashMap<String, String> getUserDetails(){
+     */
+    public HashMap<String, String> getUserDetails() {
         HashMap<String, String> user = new HashMap<String, String>();
         // user name
         user.put(KEY_NAME, prefs.getString(KEY_NAME, null));
@@ -109,8 +108,8 @@ public class SessionManager {
 
     /**
      * Clear session details
-     * */
-    public void logoutUser(){
+     */
+    public void logoutUser() {
         // Clearing all data from Shared Preferences
         editor.clear();
         editor.commit();
@@ -130,9 +129,9 @@ public class SessionManager {
 
     /**
      * Quick check for login
-     * **/
+     **/
     // Get Login Model_Category
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         return prefs.getBoolean(IS_LOGIN, false);
     }
 }

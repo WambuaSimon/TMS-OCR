@@ -32,6 +32,7 @@ import com.wizag.ocrproject.R;
 import com.wizag.ocrproject.helper.GPSLocation;
 import com.wizag.ocrproject.helper.PrefKeys;
 import com.wizag.ocrproject.helper.PrefUtils;
+import com.wizag.ocrproject.helper.SessionManager;
 import com.wizag.ocrproject.network.ApiInterface;
 import com.wizag.ocrproject.pojo.AuthUser;
 
@@ -70,6 +71,7 @@ public class Activity_Login extends AppCompatActivity {
     GPSLocation gps;
     //String password = "password";
     Double latitude, longitude;
+    SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +87,12 @@ public class Activity_Login extends AppCompatActivity {
         checkin = findViewById(R.id.checkin);
         site = findViewById(R.id.site);
         description = findViewById(R.id.description);
+
+        session  = new SessionManager(getApplicationContext());
+        if (session.isLoggedIn()) {
+            startActivity(new Intent(getApplicationContext(), Activity_Dashboard.class));
+            finish();
+        }
 
 
         gps = new GPSLocation(this);
@@ -242,6 +250,9 @@ public class Activity_Login extends AppCompatActivity {
                         prefs.edit().putString(ACCESS_TOKEN, access_token).apply();
                         prefs.edit().putString(REFRESH_TOKEN, refresh_token).apply();
                         prefs.edit().putString(TOKEN_TYPE, token_type).apply();
+
+                        /*create session with username, password and site_id*/
+                        session.createLoginSession(username_txt,password_txt,access_token,);
 
                         /*redirect to add site activity*/
                         startActivity(new Intent(getApplicationContext(), Activity_Add_Site.class));
